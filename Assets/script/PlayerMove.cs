@@ -1,26 +1,30 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UIElements;
 
 public class PlayerMove : AStar
 {
     private int movePlaneSetCount = 1000;
-    private int radiusMove = 4;
+    private int radiusMove = 0;
     int movePlaneInstListCount;
-
     public RaycastHit Hit { get; set; }
     protected List<GameObject> movePlaneInstList = new List<GameObject>();
+    private GameObject playerPlaneStandard;
+
     protected override void Awake()
     {
         base.Awake();
+        playerPlaneStandard = GameObject.Find("PlayerPlaneStandard");
+        // 플래이어 판 생성
         GameObject movePlaneprefab = Resources.Load("Prefab/Move Plane", typeof(GameObject)) as GameObject;
         for (int i = 0; i < movePlaneSetCount; i++)
         {
-            movePlaneInstList.Add(Instantiate(movePlaneprefab, transform));
+            movePlaneInstList.Add(Instantiate(movePlaneprefab, playerPlaneStandard.transform));
             movePlaneInstList[i].transform.position = new Vector3(0, -100, 0);
             movePlaneInstList[i].SetActive(false);
         }
+        player = FindAnyObjectByType<Player>();
+        radiusMove = player.RadiusMove;
     }
     protected override void SetPathFinding()
     {
@@ -38,11 +42,7 @@ public class PlayerMove : AStar
             try
             {
                 map2dObject = gameSupporter.Map2D[map2dX, map2dZ];
-            }
-            catch
-            {
-
-            }
+            } catch { }
 
             bool isWall = false;
             if ((int)GameSupporter.map2dObject.wall == map2dObject || (int)GameSupporter.map2dObject.moster == map2dObject)
@@ -52,7 +52,7 @@ public class PlayerMove : AStar
 
             NodeArray[i / sizeZ, i % sizeZ] = new Node(isWall, (i / sizeZ) + bottomLeft.x, (i % sizeZ) + bottomLeft.z);
         }
-    
+
         // 시작과 끝 노드, 열린리스트와 닫힌리스트, 마지막리스트 초기화
         StartNode = NodeArray[startPos.x - bottomLeft.x, startPos.z - bottomLeft.z];
         TargetNode = NodeArray[targetPos.x - bottomLeft.x, targetPos.z - bottomLeft.z];
@@ -61,7 +61,7 @@ public class PlayerMove : AStar
     public void setPlayerPlane()
     {
         movePlaneInstListCount = 0;
-        Vector3Int adj = new Vector3Int((int)transform.position.x - radiusMove, 0, (int)transform.position.z - radiusMove);
+        Vector3Int adj = new Vector3Int((int)playerPlaneStandard.transform.position.x - radiusMove, 0, (int)playerPlaneStandard.transform.position.z - radiusMove);
         // 지름 계산
         int diameter = radiusMove * 2 + 1;
         for (int i = 0; i < diameter * diameter; i++)
@@ -88,14 +88,11 @@ public class PlayerMove : AStar
                                 movePlaneInstList[movePlaneInstListCount].SetActive(true);
 
                                 movePlaneInstListCount++;
-
                             }
                         }
                     }
                 }
-            }
-            catch { }
-
+            } catch { }
         }
     }
     public void Move()
@@ -103,12 +100,10 @@ public class PlayerMove : AStar
         gameSupporter.Map2D[(int)transform.position.x, (int)transform.position.z] = (int)GameSupporter.map2dObject.noting;
 
         transform.position = new Vector3(Hit.transform.position.x, transform.position.y, Hit.transform.position.z);
+        playerPlaneStandard.transform.position = new Vector3(transform.position.x, 1, transform.position.z);
+        
+        RemovePlayerPlane();
 
-        for (int i = 0; i < movePlaneInstListCount; i++)
-        {
-            movePlaneInstList[i].transform.position = new Vector3(0, -100, 0);
-            movePlaneInstList[i].SetActive(false);
-        }
         gameSupporter.Map2D[(int)transform.position.x, (int)transform.position.z] = (int)GameSupporter.map2dObject.player;
     }
     protected override bool OpenListAddCondition(int checkX, int checkZ)
@@ -130,6 +125,19 @@ public class PlayerMove : AStar
             }
         }
         return false;
+    }
+    
+    // 플래이어 판 회수
+    public void RemovePlayerPlane()
+    {
+        if (movePlaneInstListCount != 0)
+        {
+            for (int i = 0; i < movePlaneInstListCount; i++)
+            {
+                movePlaneInstList[i].transform.position = new Vector3(0, -100, 0);
+                movePlaneInstList[i].SetActive(false);
+            }
+        }
     }
 
     private float Pythagoras(int pythA, int pythB)

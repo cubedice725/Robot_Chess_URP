@@ -28,7 +28,6 @@ public class GameManager : MonoBehaviour
         miniMap = FindAnyObjectByType<MiniMap>();
         map = FindAnyObjectByType<Map>();
         monsterMove = FindAnyObjectByType<MonsterMove>();
-
     }
 
     private void Update()
@@ -65,8 +64,7 @@ public class GameManager : MonoBehaviour
         }
         if (Input.GetMouseButtonDown(1))
         {
-            map.CheckBox();
-
+            
         }
         if (turnEnd)
         {

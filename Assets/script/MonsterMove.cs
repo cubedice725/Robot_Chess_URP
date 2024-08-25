@@ -16,7 +16,6 @@ public class MonsterMove : AStar
         MovingDistance = 1;
     }
     
-    
     public void Move()
     {
         gameSupporter.Map2D[(int)transform.position.x, (int)transform.position.z] = (int)GameSupporter.map2dObject.noting;
@@ -36,7 +35,7 @@ public class MonsterMove : AStar
         {
             for (int i = 1; i <= MovingDistance; i++)
             {
-                transform.position = new Vector3Int(FinalNodeList[i].x, (int)transform.position.y, FinalNodeList[i].z);
+                transform.position = new Vector3(FinalNodeList[i].x, transform.position.y, FinalNodeList[i].z);
             }
         }
         else

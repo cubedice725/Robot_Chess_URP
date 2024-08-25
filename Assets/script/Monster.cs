@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
+[RequireComponent(typeof(MonsterMove))]
 public class Monster : MonoBehaviour
 {
     protected GameSupporter gameSupporter;

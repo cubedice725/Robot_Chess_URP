@@ -4,7 +4,6 @@ using System.Threading;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
-[System.Serializable]
 public class Node
 {
     public Node ParentNode;
