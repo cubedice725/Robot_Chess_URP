@@ -6,9 +6,9 @@ public class PlayerMove : AStar
 {
     private int movePlaneSetCount = 1000;
     private int radiusMove = 0;
-    int movePlaneInstListCount;
+    int movePlaneListCount;
     public RaycastHit Hit { get; set; }
-    protected List<GameObject> movePlaneInstList = new List<GameObject>();
+    protected List<GameObject> movePlaneList = new List<GameObject>();
     private GameObject playerPlaneStandard;
 
     protected override void Awake()
@@ -16,12 +16,12 @@ public class PlayerMove : AStar
         base.Awake();
         playerPlaneStandard = GameObject.Find("PlayerPlaneStandard");
         // 플래이어 판 생성
-        GameObject movePlaneprefab = Resources.Load("Prefab/Move Plane", typeof(GameObject)) as GameObject;
+        GameObject movePlanePrefab = Resources.Load("Prefab/Move Plane", typeof(GameObject)) as GameObject;
         for (int i = 0; i < movePlaneSetCount; i++)
         {
-            movePlaneInstList.Add(Instantiate(movePlaneprefab, playerPlaneStandard.transform));
-            movePlaneInstList[i].transform.position = new Vector3(0, -100, 0);
-            movePlaneInstList[i].SetActive(false);
+            movePlaneList.Add(Instantiate(movePlanePrefab, playerPlaneStandard.transform));
+            movePlaneList[i].transform.position = new Vector3(0, -100, 0);
+            movePlaneList[i].SetActive(false);
         }
         player = FindAnyObjectByType<Player>();
         radiusMove = player.RadiusMove;
@@ -58,9 +58,9 @@ public class PlayerMove : AStar
         TargetNode = NodeArray[targetPos.x - bottomLeft.x, targetPos.z - bottomLeft.z];
     }
 
-    public void setPlayerPlane()
+    public void SetPlayerPlane()
     {
-        movePlaneInstListCount = 0;
+        movePlaneListCount = 0;
         Vector3Int adj = new Vector3Int((int)playerPlaneStandard.transform.position.x - radiusMove, 0, (int)playerPlaneStandard.transform.position.z - radiusMove);
         // 지름 계산
         int diameter = radiusMove * 2 + 1;
@@ -84,10 +84,10 @@ public class PlayerMove : AStar
                             );
                             if (FinalNodeList.Count > 1 && FinalNodeList.Count <= radiusMove + 1)
                             {
-                                movePlaneInstList[movePlaneInstListCount].transform.localPosition = new Vector3(X - radiusMove, -0.49f, Z - radiusMove);
-                                movePlaneInstList[movePlaneInstListCount].SetActive(true);
+                                movePlaneList[movePlaneListCount].transform.localPosition = new Vector3(X - radiusMove, -0.49f, Z - radiusMove);
+                                movePlaneList[movePlaneListCount].SetActive(true);
 
-                                movePlaneInstListCount++;
+                                movePlaneListCount++;
                             }
                         }
                     }
@@ -130,12 +130,12 @@ public class PlayerMove : AStar
     // 플래이어 판 회수
     public void RemovePlayerPlane()
     {
-        if (movePlaneInstListCount != 0)
+        if (movePlaneListCount != 0)
         {
-            for (int i = 0; i < movePlaneInstListCount; i++)
+            for (int i = 0; i < movePlaneListCount; i++)
             {
-                movePlaneInstList[i].transform.position = new Vector3(0, -100, 0);
-                movePlaneInstList[i].SetActive(false);
+                movePlaneList[i].transform.position = new Vector3(0, -100, 0);
+                movePlaneList[i].SetActive(false);
             }
         }
     }

@@ -19,4 +19,5 @@ public class GameSupporter : MonoBehaviour
     public int[,] Map2D { get; set; }
     public int WallPlane { get; set; } = 150;
     public int MonsterPlane { get; set; } = 10;
+    public List<GameObject> spawnMonsters = new List<GameObject>();
 }

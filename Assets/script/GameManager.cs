@@ -15,6 +15,8 @@ public class GameManager : MonoBehaviour
     Map map;
     MiniMap miniMap;
     MonsterMove monsterMove;
+    Stage1 stage1;
+    Player player;
     private bool MapCheck = true;
     protected RaycastHit hit;
 
@@ -23,11 +25,14 @@ public class GameManager : MonoBehaviour
 
     private void Awake()
     {
-        gameSupporter = FindAnyObjectByType<GameSupporter>();
         playerMove = FindAnyObjectByType<PlayerMove>();
+        monsterMove = FindAnyObjectByType<MonsterMove>();
+        player = FindAnyObjectByType<Player>();
         miniMap = FindAnyObjectByType<MiniMap>();
         map = FindAnyObjectByType<Map>();
-        monsterMove = FindAnyObjectByType<MonsterMove>();
+
+        gameSupporter = GetComponent<GameSupporter>();
+        stage1 = GetComponent<Stage1>();
     }
 
     private void Update()
@@ -35,6 +40,7 @@ public class GameManager : MonoBehaviour
         //¸ÊÀ» Å½»ö ÇÑ¹ø¸¸ ÀÛµ¿
         if (MapCheck)
         {
+            stage1.Opening();
             map.CheckBox();
             //miniMap.UpdateMiniMap();
             MapCheck = false;
@@ -53,23 +59,31 @@ public class GameManager : MonoBehaviour
                 playerMove.Hit = hit;
                 if (hit.transform.name == "Player")
                 {
-                    playerMove.setPlayerPlane();
+                    playerMove.SetPlayerPlane();
                 }
-                if (hit.transform.name.StartsWith("Move Plane"))
+                else if (hit.transform.name.StartsWith("Move Plane"))
                 {
                     playerMove.Move();
                     turnStart = true;
+                }
+                else if (hit.transform.name.StartsWith("SkillSelection"))
+                {
+                    print("SkillSelection");
+                }
+                else
+                {
+                    print(hit.transform.name);
+                    playerMove.RemovePlayerPlane();
                 }
             }
         }
         if (Input.GetMouseButtonDown(1))
         {
-            
+            player.SetSkillSelection();
         }
         if (turnEnd)
         {
-            monsterMove.Move();
-            //miniMap.UpdateMiniMap();
+            stage1.MonstersMove();
             turnEnd = false;
         }
     }
