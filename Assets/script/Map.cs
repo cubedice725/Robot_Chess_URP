@@ -10,13 +10,13 @@ using UnityEngine.UIElements;
 
 public class Map : MonoBehaviour
 {
-    protected GameSupporter gameSupporter;
-    protected GameObject odbParent;
-    protected GameObject odbPrefab;
-    protected MiniMap miniMap;
-
     // odb: object Detection Box
-    protected List<GameObject> odbList = new List<GameObject>();
+    private List<GameObject> odbList = new List<GameObject>();
+
+    private GameSupporter gameSupporter;
+    private GameObject odbParent;
+    private GameObject odbPrefab;
+    private MiniMap miniMap;
 
     // 맵에 사용할 블록 생성
     private void Awake()
@@ -36,19 +36,15 @@ public class Map : MonoBehaviour
         gameSupporter.Map2D = new int[gameSupporter.MapSizeX, gameSupporter.MapSizeZ];
 
         // 게임에 필요한 Object생성 혹은 설정
-        SetCheckBox();
-    }
-
-    // CheckBox를 생성하여 확인할 준비를 함
-    // 해당 함수는 필수적으로 Unity life cycle CollisionXXX 이전에 생성해야함
-    public void SetCheckBox()
-    {
+        // CheckBox를 생성하여 확인할 준비를 함
+        // 해당 함수는 필수적으로 Unity life cycle CollisionXXX 이전에 생성해야함
         for (int i = 0; i < gameSupporter.MapSizeX * gameSupporter.MapSizeZ; i++)
         {
             odbList[i].transform.position = new Vector3(i / gameSupporter.MapSizeZ, 1, i % gameSupporter.MapSizeZ);
             odbList[i].SetActive(true);
         }
     }
+
     // 실제로 충돌된 값을 확인하여 map2D에 넣어줌
     public void CheckBox()
     {

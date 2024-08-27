@@ -10,29 +10,29 @@ using UnityEngine.UIElements;
 
 public class GameManager : MonoBehaviour
 {
-    GameSupporter gameSupporter;
-    PlayerMove playerMove;
-    Map map;
-    MiniMap miniMap;
-    MonsterMove monsterMove;
-    Stage1 stage1;
-    Player player;
-    private bool MapCheck = true;
-    protected RaycastHit hit;
+    private GameSupporter gameSupporter;
+    private MonsterMove monsterMove;
+    private PlayerMove playerMove;
+    private MiniMap miniMap;
+    private Stage1 stage1;
+    private Player player;
+    private Map map;
 
-    bool turnStart = false;
-    bool turnEnd = false;
+    private RaycastHit hit;
+
+    private bool MapCheck = true;
+    private bool turnStart = false;
+    private bool turnEnd = false;
 
     private void Awake()
     {
-        playerMove = FindAnyObjectByType<PlayerMove>();
-        monsterMove = FindAnyObjectByType<MonsterMove>();
-        player = FindAnyObjectByType<Player>();
-        miniMap = FindAnyObjectByType<MiniMap>();
-        map = FindAnyObjectByType<Map>();
-
         gameSupporter = GetComponent<GameSupporter>();
+        monsterMove = FindAnyObjectByType<MonsterMove>();
+        playerMove = FindAnyObjectByType<PlayerMove>();
+        miniMap = FindAnyObjectByType<MiniMap>();
         stage1 = GetComponent<Stage1>();
+        player = FindAnyObjectByType<Player>();
+        map = FindAnyObjectByType<Map>();
     }
 
     private void Update()
@@ -54,32 +54,35 @@ public class GameManager : MonoBehaviour
         {
             // 메인 카메라를 통해 마우스 클릭한 곳의 ray 정보를 가져옴
             var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            if (Physics.Raycast(ray, out hit, 1000f))
+            try
             {
-                playerMove.Hit = hit;
-                if (hit.transform.name == "Player")
+                if (Physics.Raycast(ray, out hit, 1000f))
                 {
-                    playerMove.SetPlayerPlane();
-                }
-                else if (hit.transform.name.StartsWith("Move Plane"))
-                {
-                    playerMove.Move();
-                    turnStart = true;
-                }
-                else if (hit.transform.name.StartsWith("SkillSelection"))
-                {
-                    print("SkillSelection");
-                }
-                else
-                {
-                    print(hit.transform.name);
-                    playerMove.RemovePlayerPlane();
+                    playerMove.Hit = hit;
+                    if (hit.transform.name == "Player")
+                    {
+                        playerMove.SetPlayerPlane();
+                    }
+                    else if (hit.transform.name.StartsWith("Move Plane"))
+                    {
+                        playerMove.Move();
+                        turnStart = true;
+                    }
+                    else if (hit.transform.GetChild(0).name.StartsWith("SkillSelection"))
+                    {
+                        print("SkillSelection");
+                    }
+                    else
+                    {
+                        playerMove.RemovePlayerPlane();
+                    }
                 }
             }
+            catch { }
         }
         if (Input.GetMouseButtonDown(1))
         {
-            player.SetSkillSelection();
+
         }
         if (turnEnd)
         {

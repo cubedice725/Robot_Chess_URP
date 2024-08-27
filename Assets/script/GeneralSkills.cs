@@ -2,16 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GeneralSkills : MonoBehaviour
+public class GeneralSkills : Skill
 {
-    GameSupporter gameSupporter;
-    private void Awake()
+    public override void SkillCasting()
     {
-        gameSupporter = FindAnyObjectByType<GameSupporter>();
-    }
-
-    private void Casting()
-    {
-
+        print("¼º°ø");
     }
 }

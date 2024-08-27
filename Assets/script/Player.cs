@@ -11,7 +11,7 @@ public class Player : MonoBehaviour
     // Ã¼·Â
 
 
-    public RaycastHit Hit { get; set; }
+    private RaycastHit Hit { get; set; }
 
     private List<GameObject> SkillSelectionList = new List<GameObject>();
     private GameSupporter gameSupporter;

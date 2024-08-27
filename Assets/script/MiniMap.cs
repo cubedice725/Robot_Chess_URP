@@ -56,25 +56,25 @@ public class MiniMap : MonoBehaviour
         for (int i = 0; i < gameSupporter.MapSizeX * gameSupporter.MapSizeZ; i++)
         {
             int objactNum = gameSupporter.Map2D[i / gameSupporter.MapSizeZ, i % gameSupporter.MapSizeZ];
-            if (objactNum == (int)GameSupporter.map2dObject.wall)
+            if (objactNum == (int)GameSupporter.map2DObject.wall)
             {
                 wallPlanePrefabList[wallPlanCount].transform.localPosition = new Vector3(i / gameSupporter.MapSizeZ + 0.5f, 1, i % gameSupporter.MapSizeZ + 0.5f);
                 wallPlanePrefabList[wallPlanCount].SetActive(true);
 
                 wallPlanCount++;
             }
-            else if (objactNum == (int)GameSupporter.map2dObject.moster)
+            else if (objactNum == (int)GameSupporter.map2DObject.moster)
             {
                 monsterPlanePrefabList[mosterCount].transform.localPosition = new Vector3(i / gameSupporter.MapSizeZ + 0.5f, 1, i % gameSupporter.MapSizeZ + 0.5f);
                 monsterPlanePrefabList[mosterCount].SetActive(true);
 
                 mosterCount++;
             }
-            else if (objactNum == (int)GameSupporter.map2dObject.player)
+            else if (objactNum == (int)GameSupporter.map2DObject.player)
             {
                 PlayerPlane.transform.localPosition = new Vector3(i / gameSupporter.MapSizeZ + 0.5f, 1, i % gameSupporter.MapSizeZ + 0.5f);
             }
-            else if (objactNum == (int)GameSupporter.map2dObject.noting)
+            else if (objactNum == (int)GameSupporter.map2DObject.noting)
             {
 
             }

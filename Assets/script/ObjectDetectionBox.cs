@@ -5,7 +5,7 @@ using UnityEngine.UIElements;
 
 public class ObjectDetectionBox : MonoBehaviour
 {
-    protected GameSupporter gameSupporter;
+    private GameSupporter gameSupporter;
 
     public void Awake()
     {
@@ -15,19 +15,19 @@ public class ObjectDetectionBox : MonoBehaviour
     {
         if (collision.transform.name.StartsWith("Map Block"))
         {
-            gameSupporter.Map2D[(int)transform.position.x, (int)transform.position.z] = (int)GameSupporter.map2dObject.wall;
+            gameSupporter.Map2D[(int)transform.position.x, (int)transform.position.z] = (int)GameSupporter.map2DObject.wall;
         }
         else if (collision.transform.name == "Monster")
         {
-            gameSupporter.Map2D[(int)transform.position.x, (int)transform.position.z] = (int)GameSupporter.map2dObject.moster;
+            gameSupporter.Map2D[(int)transform.position.x, (int)transform.position.z] = (int)GameSupporter.map2DObject.moster;
         }
         else if (collision.transform.name == "Player")
         {
-            gameSupporter.Map2D[(int)transform.position.x, (int)transform.position.z] = (int)GameSupporter.map2dObject.player;
+            gameSupporter.Map2D[(int)transform.position.x, (int)transform.position.z] = (int)GameSupporter.map2DObject.player;
         }
         else
         {
-            gameSupporter.Map2D[(int)transform.position.x, (int)transform.position.z] = (int)GameSupporter.map2dObject.noting;
+            gameSupporter.Map2D[(int)transform.position.x, (int)transform.position.z] = (int)GameSupporter.map2DObject.noting;
         }
         collision = null;
         transform.position = new Vector3(0, -100, 0);

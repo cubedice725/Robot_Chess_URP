@@ -45,7 +45,7 @@ public class PlayerMove : AStar
             } catch { }
 
             bool isWall = false;
-            if ((int)GameSupporter.map2dObject.wall == map2dObject || (int)GameSupporter.map2dObject.moster == map2dObject)
+            if ((int)GameSupporter.map2DObject.wall == map2dObject || (int)GameSupporter.map2DObject.moster == map2dObject)
             {
                 isWall = true;
             }
@@ -72,7 +72,7 @@ public class PlayerMove : AStar
             {
                 if (X != radiusMove || Z != radiusMove)
                 {
-                    if (gameSupporter.Map2D[adj.x + X, adj.z + Z] != (int)GameSupporter.map2dObject.wall && gameSupporter.Map2D[adj.x + X, adj.z + Z] != (int)GameSupporter.map2dObject.moster)
+                    if (gameSupporter.Map2D[adj.x + X, adj.z + Z] != (int)GameSupporter.map2DObject.wall && gameSupporter.Map2D[adj.x + X, adj.z + Z] != (int)GameSupporter.map2DObject.moster)
                     {
                         if (Mathf.FloorToInt(Pythagoras(X - radiusMove, Z - radiusMove)) <= radiusMove)
                         {
@@ -97,14 +97,14 @@ public class PlayerMove : AStar
     }
     public void Move()
     {
-        gameSupporter.Map2D[(int)transform.position.x, (int)transform.position.z] = (int)GameSupporter.map2dObject.noting;
+        gameSupporter.Map2D[(int)transform.position.x, (int)transform.position.z] = (int)GameSupporter.map2DObject.noting;
 
         transform.position = new Vector3(Hit.transform.position.x, transform.position.y, Hit.transform.position.z);
         playerPlaneStandard.transform.position = new Vector3(transform.position.x, 1, transform.position.z);
         
         RemovePlayerPlane();
 
-        gameSupporter.Map2D[(int)transform.position.x, (int)transform.position.z] = (int)GameSupporter.map2dObject.player;
+        gameSupporter.Map2D[(int)transform.position.x, (int)transform.position.z] = (int)GameSupporter.map2DObject.player;
     }
     protected override bool OpenListAddCondition(int checkX, int checkZ)
     {

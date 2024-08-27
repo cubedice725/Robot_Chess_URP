@@ -23,8 +23,8 @@ public class AStar : MonoBehaviour
     public List<Node> FinalNodeList;
     public List<Node> OpenList, ClosedList;
 
-    protected bool allowDiagonal = false;
-    protected bool dontCrossCorner = false;
+    protected bool allowDiagonal = true;
+    protected bool dontCrossCorner = true;
     protected int sizeX, sizeZ;
     protected Vector3Int bottomLeft, topRight, startPos, targetPos;
 
@@ -43,7 +43,7 @@ public class AStar : MonoBehaviour
         for (int i = 0; i < sizeX * sizeZ; i++)
         {
             bool isWall = false;
-            if ((int)GameSupporter.map2dObject.wall == gameSupporter.Map2D[i / sizeZ, i % sizeZ] || (int)GameSupporter.map2dObject.moster == gameSupporter.Map2D[i / sizeZ, i % sizeZ])
+            if ((int)GameSupporter.map2DObject.wall == gameSupporter.Map2D[i / sizeZ, i % sizeZ] || (int)GameSupporter.map2DObject.moster == gameSupporter.Map2D[i / sizeZ, i % sizeZ])
             {
                 isWall = true;
             }
