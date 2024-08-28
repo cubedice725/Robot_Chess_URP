@@ -16,12 +16,12 @@ public class Node
 }
 public class AStar : MonoBehaviour
 {
+    protected List<Node> FinalNodeList;
+    protected List<Node> OpenList, ClosedList;
     protected GameSupporter gameSupporter;
     protected Player player;
     protected Node[,] NodeArray;
     protected Node StartNode, TargetNode, CurNode;
-    public List<Node> FinalNodeList;
-    public List<Node> OpenList, ClosedList;
 
     protected bool allowDiagonal = true;
     protected bool dontCrossCorner = true;

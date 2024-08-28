@@ -17,7 +17,8 @@ public class GameManager : MonoBehaviour
     private Stage1 stage1;
     private Player player;
     private Map map;
-
+    private SkillCasting skillCasting;
+    private PlayerATK playerATK;
     private RaycastHit hit;
 
     private bool MapCheck = true;
@@ -33,6 +34,8 @@ public class GameManager : MonoBehaviour
         stage1 = GetComponent<Stage1>();
         player = FindAnyObjectByType<Player>();
         map = FindAnyObjectByType<Map>();
+        skillCasting = FindAnyObjectByType<SkillCasting>();
+        playerATK = FindAnyObjectByType<PlayerATK>();
     }
 
     private void Update()
@@ -62,19 +65,27 @@ public class GameManager : MonoBehaviour
                     if (hit.transform.name == "Player")
                     {
                         playerMove.SetPlayerPlane();
+                        playerATK.RemoveSkillSelection();
                     }
                     else if (hit.transform.name.StartsWith("Move Plane"))
                     {
                         playerMove.Move();
                         turnStart = true;
                     }
-                    else if (hit.transform.GetChild(0).name.StartsWith("SkillSelection"))
+                    else if (hit.transform.name.StartsWith("Monster"))
                     {
-                        print("SkillSelection");
+                        if (hit.transform.GetChild(0).name.StartsWith("SkillSelection"))
+                        {
+                            if (gameSupporter.skillState != null)
+                            {
+                                skillCasting.SkillGet(gameSupporter.skillState);
+                            }
+                        }
                     }
                     else
                     {
                         playerMove.RemovePlayerPlane();
+                        playerATK.RemoveSkillSelection();
                     }
                 }
             }
@@ -82,7 +93,6 @@ public class GameManager : MonoBehaviour
         }
         if (Input.GetMouseButtonDown(1))
         {
-
         }
         if (turnEnd)
         {

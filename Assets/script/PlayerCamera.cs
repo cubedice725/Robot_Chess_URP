@@ -7,18 +7,18 @@ using UnityEngine;
 
 public class PlayerCamera : MonoBehaviour
 {
-    protected CinemachineVirtualCamera cam;
-    protected Player player;
+    private CinemachineVirtualCamera cam;
+    private Player player;
 
     private float scrollSpeed = 2000.0f;
     private float mouseSpeed = 100f;
-    float scrollWheel;
-    public void Awake()
+    private float scrollWheel;
+    private void Awake()
     {
         cam = GetComponent<CinemachineVirtualCamera>();
         player = FindObjectOfType<Player>();
     }
-    public void Update()
+    private void Update()
     {
         // 화면 따라가기
         if (Input.GetKeyDown("space"))
@@ -36,7 +36,7 @@ public class PlayerCamera : MonoBehaviour
         }
     }
     // 카메라 움직임
-    public void CameraMove()
+    private void CameraMove()
     {
         Vector3 mousePosition = Input.mousePosition;
 
@@ -94,7 +94,7 @@ public class PlayerCamera : MonoBehaviour
     }
 
     // 카메라 줌인, 줌아웃
-    public void ZoomInOut()
+    private void ZoomInOut()
     {
         CamFollowNull();
         scrollWheel = Input.GetAxis("Mouse ScrollWheel");

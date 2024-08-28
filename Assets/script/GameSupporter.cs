@@ -6,7 +6,7 @@ using UnityEngine;
 public class GameSupporter : MonoBehaviour
 {
     public List<GameObject> spawnMonsters = new List<GameObject>();
-    public Skill skillState = null;
+    public Skill skillState;
     public enum map2DObject
     {
         noting = 0,

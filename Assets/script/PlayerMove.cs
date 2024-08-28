@@ -4,12 +4,17 @@ using UnityEngine;
 
 public class PlayerMove : AStar
 {
-    private int movePlaneSetCount = 1000;
-    private int radiusMove = 0;
-    int movePlaneListCount;
-    public RaycastHit Hit { get; set; }
-    protected List<GameObject> movePlaneList = new List<GameObject>();
+    private List<GameObject> movePlaneList = new List<GameObject>();
     private GameObject playerPlaneStandard;
+    public RaycastHit Hit { get; set; }
+
+    // 이동거리
+    private int radiusMove = 4;
+
+    private int movePlaneSetCount = 1000;
+    
+    int movePlaneListCount;
+    
 
     protected override void Awake()
     {
@@ -23,8 +28,6 @@ public class PlayerMove : AStar
             movePlaneList[i].transform.position = new Vector3(0, -100, 0);
             movePlaneList[i].SetActive(false);
         }
-        player = FindAnyObjectByType<Player>();
-        radiusMove = player.RadiusMove;
     }
     protected override void SetPathFinding()
     {
