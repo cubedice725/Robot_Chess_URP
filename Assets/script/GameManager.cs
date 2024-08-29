@@ -62,6 +62,7 @@ public class GameManager : MonoBehaviour
                 if (Physics.Raycast(ray, out hit, 1000f))
                 {
                     playerMove.Hit = hit;
+                    //print(hit.transform.name);
                     if (hit.transform.name == "Player")
                     {
                         playerMove.SetPlayerPlane();
@@ -72,14 +73,12 @@ public class GameManager : MonoBehaviour
                         playerMove.Move();
                         turnStart = true;
                     }
-                    else if (hit.transform.name.StartsWith("Monster"))
+                    else if (hit.transform.name.StartsWith("SkillSelection"))
                     {
-                        if (hit.transform.GetChild(0).name.StartsWith("SkillSelection"))
+                        if (gameSupporter.skillState != null)
                         {
-                            if (gameSupporter.skillState != null)
-                            {
-                                skillCasting.SkillGet(gameSupporter.skillState);
-                            }
+                            skillCasting.SkillGet(gameSupporter.skillState);
+                            gameSupporter.skillState = null;
                         }
                     }
                     else

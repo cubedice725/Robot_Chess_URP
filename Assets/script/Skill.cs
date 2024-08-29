@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Pool;
 
 public abstract class Skill : MonoBehaviour
 {
@@ -9,5 +10,8 @@ public abstract class Skill : MonoBehaviour
     {
         playerATK = FindAnyObjectByType<PlayerATK>();
     }
+    protected abstract void OnCollisionEnter(Collision collision);
     public abstract void SkillCasting();
+    public abstract void SetManagedPool(IObjectPool<Skill> pool);
+    protected abstract void Destroy();
 }

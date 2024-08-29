@@ -5,18 +5,32 @@ using UnityEngine.Pool;
 
 public class GeneralSkills : Skill
 {
-    private IObjectPool<Skill> _ManagedPool;
+    private Vector3 _Direction = Vector3.up;
+    private float _Speed = 3f;
 
+    private IObjectPool<Skill> _ManagedPool;
+    void Update()
+    {
+        transform.Translate(_Direction * Time.deltaTime * _Speed);
+    }
     public override void SkillCasting()
     {
         playerATK.RemoveSkillSelection();
-        Invoke("Destroy", 5f);
+        transform.gameObject.SetActive(true);
     }
-    public void SetManagedPool(IObjectPool<Skill> pool)
+    protected override void OnCollisionEnter(Collision collision)
+    {
+        if (collision != null)
+        {
+            Destroy();
+            collision = null;
+        }
+    }
+    public override void SetManagedPool(IObjectPool<Skill> pool)
     {
         _ManagedPool = pool;
     }
-    public void Destroy()
+    protected override void Destroy()
     {
         _ManagedPool.Release(this);
     }
