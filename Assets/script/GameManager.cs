@@ -30,7 +30,6 @@ public class GameManager : MonoBehaviour
         gameSupporter = GetComponent<GameSupporter>();
         monsterMove = FindAnyObjectByType<MonsterMove>();
         playerMove = FindAnyObjectByType<PlayerMove>();
-        miniMap = FindAnyObjectByType<MiniMap>();
         stage1 = GetComponent<Stage1>();
         player = FindAnyObjectByType<Player>();
         map = FindAnyObjectByType<Map>();
@@ -57,41 +56,40 @@ public class GameManager : MonoBehaviour
         {
             // 메인 카메라를 통해 마우스 클릭한 곳의 ray 정보를 가져옴
             var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            try
+            if (Physics.Raycast(ray, out hit, 1000f))
             {
-                if (Physics.Raycast(ray, out hit, 1000f))
+                playerMove.Hit = hit;
+                //print(hit.transform.name);
+                if (hit.transform.name == "Player")
                 {
-                    playerMove.Hit = hit;
-                    //print(hit.transform.name);
-                    if (hit.transform.name == "Player")
+                    playerMove.SetPlayerPlane();
+                    playerATK.RemoveSkillSelection();
+                    gameSupporter.skillState = null;
+                }
+                else if (hit.transform.name.StartsWith("Move Plane"))
+                {
+                    playerMove.Move();
+                    turnStart = true;
+                }
+                else if (hit.transform.name.StartsWith("SkillSelection"))
+                {
+                    if (gameSupporter.skillState is Skill)
                     {
-                        playerMove.SetPlayerPlane();
-                        playerATK.RemoveSkillSelection();
-                    }
-                    else if (hit.transform.name.StartsWith("Move Plane"))
-                    {
-                        playerMove.Move();
-                        turnStart = true;
-                    }
-                    else if (hit.transform.name.StartsWith("SkillSelection"))
-                    {
-                        if (gameSupporter.skillState != null)
-                        {
-                            skillCasting.SkillGet(gameSupporter.skillState);
-                            gameSupporter.skillState = null;
-                        }
-                    }
-                    else
-                    {
-                        playerMove.RemovePlayerPlane();
-                        playerATK.RemoveSkillSelection();
+                        skillCasting.SkillGet(gameSupporter.skillState);
+                        gameSupporter.skillState = null;
                     }
                 }
+                else
+                {
+                    playerMove.RemovePlayerPlane();
+                    playerATK.RemoveSkillSelection();
+                    gameSupporter.skillState = null;
+                }
             }
-            catch { }
         }
         if (Input.GetMouseButtonDown(1))
         {
+            print(gameSupporter.skillState);
         }
         if (turnEnd)
         {

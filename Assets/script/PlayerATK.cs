@@ -16,20 +16,49 @@ public class PlayerATK : MonoBehaviour
     private IObjectPool<Skill> generalSkillPool;
     private GameObject generalSkillPrefab;
     private Skill generalSkills;
+
     private void Awake()
     {
         gameSupporter = FindObjectOfType<GameSupporter>();
         playerMove = GetComponent<PlayerMove>();
 
         SkillSelectionPrefab = Resources.Load("Prefab/SkillSelection", typeof(GameObject)) as GameObject;
-        SkillSelectionPool = new ObjectPool<SkillSelection>(CreateSkillSelection, OnGetSkillSelection, OnReleaseSkillSelection, OnDestroySkillSelection, maxSize: 20);
+        SkillSelectionPool = new ObjectPool<SkillSelection>
+            (
+            CreateSkillSelection, 
+            OnGetSkillSelection, 
+            OnReleaseSkillSelection, 
+            OnDestroySkillSelection, 
+            maxSize: 20
+            );
 
         generalSkillPrefab = Resources.Load("Prefab/Skill/GeneralSkills", typeof(GameObject)) as GameObject;
-        generalSkillPool = new ObjectPool<Skill>(CreateSkill, OnGetSkill, OnReleaseSkill, OnDestroySkill, maxSize: 20);
+        generalSkillPool = new ObjectPool<Skill>
+            (
+            CreateSkill, 
+            OnGetSkill, 
+            OnReleaseSkill, 
+            OnDestroySkill, 
+            maxSize: 20
+            );
     }
+
+    public void OnClickGeneralSkills()
+    {
+        if (gameSupporter.skillState is not Skill)
+        {
+            playerMove.RemovePlayerPlane();
+            SetSkillSelection();
+            generalSkills = generalSkillPool.Get();
+            gameSupporter.skillState = generalSkills;
+        }
+    }
+
+    // SkillSelection Pool 관련 함수
+    //-----------------------------------------------------------
     public void SetSkillSelection()
     {
-        for (int i = 0; i < gameSupporter.spawnMonsters.Count; i++)
+        for (int i = 0; i<gameSupporter.spawnMonsters.Count; i++)
         {
             skillSelectionList.Add(SkillSelectionPool.Get());
             skillSelectionList[i].transform.position = gameSupporter.spawnMonsters[i].transform.position;
@@ -38,18 +67,31 @@ public class PlayerATK : MonoBehaviour
     }
     public void RemoveSkillSelection()
     {
-        for (int i = 0; i < gameSupporter.spawnMonsters.Count; i++)
+        if (skillSelectionList.Count > 0 && skillSelectionList[0].gameObject.activeSelf == true)
         {
-            skillSelectionList[i].Destroy();
+            for (int i = 0; i < gameSupporter.spawnMonsters.Count; i++)
+            {
+                skillSelectionList[i].Destroy();
+            }
         }
     }
-    
-    public void OnClickGeneralSkills()
+    private SkillSelection CreateSkillSelection()
     {
-        playerMove.RemovePlayerPlane();
-        SetSkillSelection();
-        generalSkills = generalSkillPool.Get();
-        gameSupporter.skillState = generalSkills;
+        SkillSelection Selection = Instantiate(SkillSelectionPrefab).GetComponent<SkillSelection>();
+        Selection.SetManagedPool(SkillSelectionPool);
+        return Selection;
+    }
+    private void OnGetSkillSelection(SkillSelection Selection)
+    {
+        Selection.gameObject.SetActive(true);
+    }
+    private void OnReleaseSkillSelection(SkillSelection Selection)
+    {
+        Selection.gameObject.SetActive(false);
+    }
+    private void OnDestroySkillSelection(SkillSelection Selection)
+    {
+        Destroy(Selection.gameObject);
     }
 
     // Skill Pool 관련 함수
@@ -71,26 +113,5 @@ public class PlayerATK : MonoBehaviour
     private void OnDestroySkill(Skill skill)
     {
         Destroy(skill.gameObject);
-    }
-
-    // SkillSelection Pool 관련 함수
-    //-----------------------------------------------------------
-    private SkillSelection CreateSkillSelection()
-    {
-        SkillSelection Selection = Instantiate(SkillSelectionPrefab).GetComponent<SkillSelection>();
-        Selection.SetManagedPool(SkillSelectionPool);
-        return Selection;
-    }
-    private void OnGetSkillSelection(SkillSelection Selection)
-    {
-        Selection.gameObject.SetActive(true);
-    }
-    private void OnReleaseSkillSelection(SkillSelection Selection)
-    {
-        Selection.gameObject.SetActive(false);
-    }
-    private void OnDestroySkillSelection(SkillSelection Selection)
-    {
-        Destroy(Selection.gameObject);
     }
 }
