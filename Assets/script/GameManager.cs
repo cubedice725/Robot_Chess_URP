@@ -66,7 +66,7 @@ public class GameManager : MonoBehaviour
                     playerATK.RemoveSkillSelection();
                     gameSupporter.skillState = null;
                 }
-                else if (hit.transform.name.StartsWith("Move Plane"))
+                else if (hit.transform.name.StartsWith("PlayerMovePlane"))
                 {
                     playerMove.Move();
                     turnStart = true;

@@ -82,5 +82,4 @@ public class Map : MonoBehaviour
     {
         Destroy(ODB.gameObject);
     }
-
 }

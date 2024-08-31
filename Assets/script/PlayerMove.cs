@@ -1,11 +1,15 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Numerics;
 using UnityEngine;
+using UnityEngine.Pool;
 
 public class PlayerMove : AStar
 {
-    private List<GameObject> movePlaneList = new List<GameObject>();
+    private IObjectPool<PlayerMovePlane> playerMovePlanePool;
+    private GameObject playerMovePlanePrefab;
     private GameObject playerPlaneStandard;
+    private List<PlayerMovePlane> playerMovePlaneList = new List<PlayerMovePlane>();
     public RaycastHit Hit { get; set; }
 
     // 이동거리
@@ -13,7 +17,7 @@ public class PlayerMove : AStar
 
     private int movePlaneSetCount = 1000;
     
-    int movePlaneListCount;
+    int playerMovePlaneListCount;
     
 
     protected override void Awake()
@@ -21,12 +25,21 @@ public class PlayerMove : AStar
         base.Awake();
         playerPlaneStandard = GameObject.Find("PlayerPlaneStandard");
         // 플래이어 판 생성
-        GameObject movePlanePrefab = Resources.Load("Prefab/Move Plane", typeof(GameObject)) as GameObject;
+        GameObject playerMovePlanePrefab = Resources.Load("Prefab/PlayerMovePlane", typeof(GameObject)) as GameObject;
+
+        playerMovePlanePool = new ObjectPool<PlayerMovePlane>
+            (
+            CreatePlayerMovePlane, 
+            OnGetPlayerMovePlane, 
+            OnReleasePlayerMovePlane, 
+            OnDestroyPlayerMovePlane,
+            maxSize: 500
+            );
+
         for (int i = 0; i < movePlaneSetCount; i++)
         {
-            movePlaneList.Add(Instantiate(movePlanePrefab, playerPlaneStandard.transform));
-            movePlaneList[i].transform.position = new Vector3(0, -100, 0);
-            movePlaneList[i].SetActive(false);
+            playerMovePlaneList.Add(playerMovePlanePool.Get());
+            playerMovePlaneList[i].SetActive(false);
         }
     }
     protected override void SetPathFinding()
@@ -63,7 +76,7 @@ public class PlayerMove : AStar
 
     public void SetPlayerPlane()
     {
-        movePlaneListCount = 0;
+        playerMovePlaneListCount = 0;
         Vector3Int adj = new Vector3Int((int)playerPlaneStandard.transform.position.x - radiusMove, 0, (int)playerPlaneStandard.transform.position.z - radiusMove);
         // 지름 계산
         int diameter = radiusMove * 2 + 1;
@@ -87,10 +100,10 @@ public class PlayerMove : AStar
                             );
                             if (FinalNodeList.Count > 1 && FinalNodeList.Count <= radiusMove + 1)
                             {
-                                movePlaneList[movePlaneListCount].transform.localPosition = new Vector3(X - radiusMove, -0.49f, Z - radiusMove);
-                                movePlaneList[movePlaneListCount].SetActive(true);
+                                playerMovePlaneList[playerMovePlaneListCount].transform.localPosition = new Vector3(X - radiusMove, -0.49f, Z - radiusMove);
+                                playerMovePlaneList[playerMovePlaneListCount].SetActive(true);
 
-                                movePlaneListCount++;
+                                playerMovePlaneListCount++;
                             }
                         }
                     }
@@ -133,12 +146,12 @@ public class PlayerMove : AStar
     // 플래이어 판 회수
     public void RemovePlayerPlane()
     {
-        if (movePlaneListCount != 0)
+        if (playerMovePlaneListCount != 0)
         {
-            for (int i = 0; i < movePlaneListCount; i++)
+            for (int i = 0; i < playerMovePlaneListCount; i++)
             {
-                movePlaneList[i].transform.position = new Vector3(0, -100, 0);
-                movePlaneList[i].SetActive(false);
+                playerMovePlaneList[i].gameObject.transform.position = new Vector3(0, -100, 0);
+                playerMovePlaneList[i].SetActive(false);
             }
         }
     }
@@ -147,4 +160,24 @@ public class PlayerMove : AStar
     {
         return Mathf.Sqrt((pythA * pythA) + (pythB * pythB));
     }
+
+    private PlayerMovePlane CreatePlayerMovePlane()
+    {
+        PlayerMovePlane plane = Instantiate(playerMovePlanePrefab).GetComponent<PlayerMovePlane>();
+        plane.SetManagedPool(playerMovePlanePool);
+        return plane;
+    }
+    private void OnGetPlayerMovePlane(PlayerMovePlane plane)
+    {
+        plane.gameObject.SetActive(false);
+    }
+    private void OnReleasePlayerMovePlane(PlayerMovePlane plane)
+    {
+        plane.gameObject.SetActive(false);
+    }
+    private void OnDestroyPlayerMovePlane(PlayerMovePlane plane)
+    {
+        Destroy(plane.gameObject);
+    }
 }
+
