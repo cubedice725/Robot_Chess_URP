@@ -13,5 +13,5 @@ public abstract class Skill : MonoBehaviour
     protected abstract void OnCollisionEnter(Collision collision);
     public abstract void SkillCasting();
     public abstract void SetManagedPool(IObjectPool<Skill> pool);
-    protected abstract void Destroy();
+    public abstract void Destroy();
 }

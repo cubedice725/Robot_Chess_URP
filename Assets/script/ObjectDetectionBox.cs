@@ -37,7 +37,7 @@ public class ObjectDetectionBox : MonoBehaviour
     {
         _ManagedPool = pool;
     }
-    protected void Destroy()
+    public void Destroy()
     {
         _ManagedPool.Release(this);
     }

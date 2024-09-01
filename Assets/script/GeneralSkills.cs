@@ -30,7 +30,7 @@ public class GeneralSkills : Skill
     {
         _ManagedPool = pool;
     }
-    protected override void Destroy()
+    public override void Destroy()
     {
         _ManagedPool.Release(this);
     }

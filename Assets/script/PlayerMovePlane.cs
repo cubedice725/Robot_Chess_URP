@@ -11,7 +11,7 @@ public class PlayerMovePlane : MonoBehaviour
     {
         _ManagedPool = pool;
     }
-    protected void Destroy()
+    public void Destroy()
     {
         _ManagedPool.Release(this);
     }

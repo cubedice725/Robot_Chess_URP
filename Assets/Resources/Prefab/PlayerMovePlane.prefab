@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 9044382033941408459}
   - component: {fileID: 4154675163970560337}
   - component: {fileID: 4904265655281704729}
-  - component: {fileID: 4598899781564620247}
+  - component: {fileID: 2969672986342755995}
   m_Layer: 0
   m_Name: PlayerMovePlane
   m_TagString: Untagged
@@ -106,7 +106,7 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1.25, y: 1, z: 1.25}
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &4598899781564620247
+--- !u!114 &2969672986342755995
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

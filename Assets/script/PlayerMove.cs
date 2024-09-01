@@ -1,6 +1,6 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Numerics;
 using UnityEngine;
 using UnityEngine.Pool;
 
@@ -15,18 +15,11 @@ public class PlayerMove : AStar
     // 이동거리
     private int radiusMove = 4;
 
-    private int movePlaneSetCount = 1000;
-    
-    int playerMovePlaneListCount;
-    
-
     protected override void Awake()
     {
         base.Awake();
         playerPlaneStandard = GameObject.Find("PlayerPlaneStandard");
-        // 플래이어 판 생성
-        GameObject playerMovePlanePrefab = Resources.Load("Prefab/PlayerMovePlane", typeof(GameObject)) as GameObject;
-
+        playerMovePlanePrefab = Resources.Load("Prefab/PlayerMovePlane", typeof(GameObject)) as GameObject;
         playerMovePlanePool = new ObjectPool<PlayerMovePlane>
             (
             CreatePlayerMovePlane, 
@@ -35,12 +28,6 @@ public class PlayerMove : AStar
             OnDestroyPlayerMovePlane,
             maxSize: 500
             );
-
-        for (int i = 0; i < movePlaneSetCount; i++)
-        {
-            playerMovePlaneList.Add(playerMovePlanePool.Get());
-            playerMovePlaneList[i].SetActive(false);
-        }
     }
     protected override void SetPathFinding()
     {
@@ -76,7 +63,6 @@ public class PlayerMove : AStar
 
     public void SetPlayerPlane()
     {
-        playerMovePlaneListCount = 0;
         Vector3Int adj = new Vector3Int((int)playerPlaneStandard.transform.position.x - radiusMove, 0, (int)playerPlaneStandard.transform.position.z - radiusMove);
         // 지름 계산
         int diameter = radiusMove * 2 + 1;
@@ -88,6 +74,7 @@ public class PlayerMove : AStar
             {
                 if (X != radiusMove || Z != radiusMove)
                 {
+                    // 맵을 넘어가면 그에 해당한는 값이 Map2D에 존재하지 않아 try catch로 해결
                     if (gameSupporter.Map2D[adj.x + X, adj.z + Z] != (int)GameSupporter.map2DObject.wall && gameSupporter.Map2D[adj.x + X, adj.z + Z] != (int)GameSupporter.map2DObject.moster)
                     {
                         if (Mathf.FloorToInt(Pythagoras(X - radiusMove, Z - radiusMove)) <= radiusMove)
@@ -100,15 +87,15 @@ public class PlayerMove : AStar
                             );
                             if (FinalNodeList.Count > 1 && FinalNodeList.Count <= radiusMove + 1)
                             {
-                                playerMovePlaneList[playerMovePlaneListCount].transform.localPosition = new Vector3(X - radiusMove, -0.49f, Z - radiusMove);
-                                playerMovePlaneList[playerMovePlaneListCount].SetActive(true);
-
-                                playerMovePlaneListCount++;
+                                playerMovePlaneList.Add(playerMovePlanePool.Get());
+                                playerMovePlaneList[playerMovePlaneList.Count - 1].transform.parent = playerPlaneStandard.transform;
+                                playerMovePlaneList[playerMovePlaneList.Count - 1].transform.localPosition = new Vector3(X - radiusMove, -0.49f, Z - radiusMove);
                             }
                         }
                     }
                 }
-            } catch { }
+            }
+            catch{ }
         }
     }
     public void Move()
@@ -146,21 +133,20 @@ public class PlayerMove : AStar
     // 플래이어 판 회수
     public void RemovePlayerPlane()
     {
-        if (playerMovePlaneListCount != 0)
+        if (playerMovePlaneList[0].gameObject.activeSelf == true)
         {
-            for (int i = 0; i < playerMovePlaneListCount; i++)
+            for (int i = 0; i < playerMovePlaneList.Count; i++)
             {
-                playerMovePlaneList[i].gameObject.transform.position = new Vector3(0, -100, 0);
-                playerMovePlaneList[i].SetActive(false);
+                if (playerMovePlaneList[i].gameObject.activeSelf == true)
+                {
+                    playerMovePlaneList[i].Destroy();
+                }
             }
         }
     }
 
-    private float Pythagoras(int pythA, int pythB)
-    {
-        return Mathf.Sqrt((pythA * pythA) + (pythB * pythB));
-    }
-
+    // PlayerMovePlane 관련 함수
+    //-------------------------------------------------------
     private PlayerMovePlane CreatePlayerMovePlane()
     {
         PlayerMovePlane plane = Instantiate(playerMovePlanePrefab).GetComponent<PlayerMovePlane>();
@@ -169,7 +155,7 @@ public class PlayerMove : AStar
     }
     private void OnGetPlayerMovePlane(PlayerMovePlane plane)
     {
-        plane.gameObject.SetActive(false);
+        plane.gameObject.SetActive(true);
     }
     private void OnReleasePlayerMovePlane(PlayerMovePlane plane)
     {
@@ -178,6 +164,12 @@ public class PlayerMove : AStar
     private void OnDestroyPlayerMovePlane(PlayerMovePlane plane)
     {
         Destroy(plane.gameObject);
+    }
+
+    //피타고라스 함수
+    private float Pythagoras(int pythA, int pythB)
+    {
+        return Mathf.Sqrt((pythA * pythA) + (pythB * pythB));
     }
 }
 

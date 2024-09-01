@@ -67,11 +67,14 @@ public class PlayerATK : MonoBehaviour
     }
     public void RemoveSkillSelection()
     {
-        if (skillSelectionList.Count > 0 && skillSelectionList[0].gameObject.activeSelf == true)
+        if (skillSelectionList[0].gameObject.activeSelf == true)
         {
             for (int i = 0; i < gameSupporter.spawnMonsters.Count; i++)
             {
-                skillSelectionList[i].Destroy();
+                if (skillSelectionList[i].gameObject.activeSelf == true)
+                {
+                    skillSelectionList[i].Destroy();
+                }
             }
         }
     }
