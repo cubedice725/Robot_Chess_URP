@@ -15,7 +15,6 @@ public class GeneralSkills : Skill
     }
     public override void SkillCasting()
     {
-        playerATK.RemoveSkillSelection();
         transform.gameObject.SetActive(true);
     }
     protected override void OnCollisionEnter(Collision collision)

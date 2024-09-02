@@ -62,12 +62,17 @@ public class GameManager : MonoBehaviour
                 //print(hit.transform.name);
                 if (hit.transform.name == "Player")
                 {
-                    playerMove.SetPlayerPlane();
+                    playerMove.RemovePlayerPlane();
                     playerATK.RemoveSkillSelection();
+
+                    playerMove.SetPlayerPlane();
                     gameSupporter.skillState = null;
                 }
                 else if (hit.transform.name.StartsWith("PlayerMovePlane"))
                 {
+                    playerMove.RemovePlayerPlane();
+                    playerATK.RemoveSkillSelection();
+
                     playerMove.Move();
                     turnStart = true;
                 }
@@ -75,6 +80,8 @@ public class GameManager : MonoBehaviour
                 {
                     if (gameSupporter.skillState is Skill)
                     {
+                        playerMove.RemovePlayerPlane();
+                        playerATK.RemoveSkillSelection();
                         skillCasting.SkillGet(gameSupporter.skillState);
                         gameSupporter.skillState = null;
                     }
@@ -83,6 +90,7 @@ public class GameManager : MonoBehaviour
                 {
                     playerMove.RemovePlayerPlane();
                     playerATK.RemoveSkillSelection();
+
                     gameSupporter.skillState = null;
                 }
             }

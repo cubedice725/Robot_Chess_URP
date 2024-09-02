@@ -105,7 +105,6 @@ public class PlayerMove : AStar
         transform.position = new Vector3(Hit.transform.position.x, transform.position.y, Hit.transform.position.z);
         playerPlaneStandard.transform.position = new Vector3(transform.position.x, 1, transform.position.z);
         
-        RemovePlayerPlane();
 
         gameSupporter.Map2D[(int)transform.position.x, (int)transform.position.z] = (int)GameSupporter.map2DObject.player;
     }
@@ -133,13 +132,16 @@ public class PlayerMove : AStar
     // 플래이어 판 회수
     public void RemovePlayerPlane()
     {
-        if (playerMovePlaneList[0].gameObject.activeSelf == true)
+        if (playerMovePlaneList.Count > 0)
         {
-            for (int i = 0; i < playerMovePlaneList.Count; i++)
+            if (playerMovePlaneList[playerMovePlaneList.Count - 1].gameObject.activeSelf == true)
             {
-                if (playerMovePlaneList[i].gameObject.activeSelf == true)
+                for (int i = 0; i < playerMovePlaneList.Count; i++)
                 {
-                    playerMovePlaneList[i].Destroy();
+                    if (playerMovePlaneList[i].gameObject.activeSelf == true)
+                    {
+                        playerMovePlaneList[i].Destroy();
+                    }
                 }
             }
         }

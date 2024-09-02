@@ -6,7 +6,6 @@ using UnityEngine.Pool;
 
 public class PlayerATK : MonoBehaviour
 {
-    private PlayerMove playerMove;
     private GameSupporter gameSupporter;
 
     private IObjectPool<SkillSelection> SkillSelectionPool;
@@ -20,7 +19,6 @@ public class PlayerATK : MonoBehaviour
     private void Awake()
     {
         gameSupporter = FindObjectOfType<GameSupporter>();
-        playerMove = GetComponent<PlayerMove>();
 
         SkillSelectionPrefab = Resources.Load("Prefab/SkillSelection", typeof(GameObject)) as GameObject;
         SkillSelectionPool = new ObjectPool<SkillSelection>
@@ -47,7 +45,6 @@ public class PlayerATK : MonoBehaviour
     {
         if (gameSupporter.skillState is not Skill)
         {
-            playerMove.RemovePlayerPlane();
             SetSkillSelection();
             generalSkills = generalSkillPool.Get();
             gameSupporter.skillState = generalSkills;
@@ -67,16 +64,20 @@ public class PlayerATK : MonoBehaviour
     }
     public void RemoveSkillSelection()
     {
-        if (skillSelectionList[0].gameObject.activeSelf == true)
+        if(skillSelectionList.Count > 0)
         {
-            for (int i = 0; i < gameSupporter.spawnMonsters.Count; i++)
+            if (skillSelectionList[skillSelectionList.Count - 1].gameObject.activeSelf == true)
             {
-                if (skillSelectionList[i].gameObject.activeSelf == true)
+                for (int i = 0; i < gameSupporter.spawnMonsters.Count; i++)
                 {
-                    skillSelectionList[i].Destroy();
+                    if (skillSelectionList[i].gameObject.activeSelf == true)
+                    {
+                        skillSelectionList[i].Destroy();
+                    }
                 }
             }
         }
+        
     }
     private SkillSelection CreateSkillSelection()
     {
