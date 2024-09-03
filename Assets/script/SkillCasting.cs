@@ -5,8 +5,8 @@ using UnityEngine.UIElements.Experimental;
 
 public class SkillCasting : MonoBehaviour
 {
-    public void SkillGet(Skill skill)
+    public void SkillGet(Skill skill, Transform monster)
     {
-        skill.SkillCasting();
+        skill.SkillCasting(monster);
     }
 }

@@ -82,7 +82,8 @@ public class GameManager : MonoBehaviour
                     {
                         playerMove.RemovePlayerPlane();
                         playerATK.RemoveSkillSelection();
-                        skillCasting.SkillGet(gameSupporter.skillState);
+
+                        skillCasting.SkillGet(gameSupporter.skillState, hit.transform.parent.transform);
                         gameSupporter.skillState = null;
                     }
                 }

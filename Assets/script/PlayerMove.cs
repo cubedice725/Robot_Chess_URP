@@ -29,38 +29,18 @@ public class PlayerMove : AStar
             maxSize: 500
             );
     }
-    protected override void SetPathFinding()
+    public void Move()
     {
-        // NodeArray의 크기 정해주고, isWall, x, z 대입
-        sizeX = topRight.x - bottomLeft.x;
-        sizeZ = topRight.z - bottomLeft.z;
-        NodeArray = new Node[sizeX, sizeZ];
+        gameSupporter.Map2D[(int)transform.position.x, (int)transform.position.z] = (int)GameSupporter.map2DObject.noting;
 
-        for (int i = 0; i < sizeX * sizeZ; i++)
-        {
-            int map2dObject = 0;
-            int map2dX = (int)transform.position.x + ((i / (radiusMove * 2 + 1)) - radiusMove);
-            int map2dZ = (int)transform.position.z + ((i % (radiusMove * 2 + 1)) - radiusMove);
+        transform.position = new Vector3(Hit.transform.position.x, transform.position.y, Hit.transform.position.z);
+        playerPlaneStandard.transform.position = new Vector3(transform.position.x, 1, transform.position.z);
+        
 
-            try
-            {
-                map2dObject = gameSupporter.Map2D[map2dX, map2dZ];
-            } catch { }
-
-            bool isWall = false;
-            if ((int)GameSupporter.map2DObject.wall == map2dObject || (int)GameSupporter.map2DObject.moster == map2dObject)
-            {
-                isWall = true;
-            }
-
-            NodeArray[i / sizeZ, i % sizeZ] = new Node(isWall, (i / sizeZ) + bottomLeft.x, (i % sizeZ) + bottomLeft.z);
-        }
-
-        // 시작과 끝 노드, 열린리스트와 닫힌리스트, 마지막리스트 초기화
-        StartNode = NodeArray[startPos.x - bottomLeft.x, startPos.z - bottomLeft.z];
-        TargetNode = NodeArray[targetPos.x - bottomLeft.x, targetPos.z - bottomLeft.z];
+        gameSupporter.Map2D[(int)transform.position.x, (int)transform.position.z] = (int)GameSupporter.map2DObject.player;
     }
 
+    // 플레이어 판 세팅
     public void SetPlayerPlane()
     {
         Vector3Int adj = new Vector3Int((int)playerPlaneStandard.transform.position.x - radiusMove, 0, (int)playerPlaneStandard.transform.position.z - radiusMove);
@@ -95,19 +75,29 @@ public class PlayerMove : AStar
                     }
                 }
             }
-            catch{ }
+            catch { }
         }
     }
-    public void Move()
+    // 플레이어 판 회수
+    public void RemovePlayerPlane()
     {
-        gameSupporter.Map2D[(int)transform.position.x, (int)transform.position.z] = (int)GameSupporter.map2DObject.noting;
-
-        transform.position = new Vector3(Hit.transform.position.x, transform.position.y, Hit.transform.position.z);
-        playerPlaneStandard.transform.position = new Vector3(transform.position.x, 1, transform.position.z);
-        
-
-        gameSupporter.Map2D[(int)transform.position.x, (int)transform.position.z] = (int)GameSupporter.map2DObject.player;
+        if (playerMovePlaneList.Count > 0)
+        {
+            if (playerMovePlaneList[playerMovePlaneList.Count - 1].gameObject.activeSelf == true)
+            {
+                for (int i = 0; i < playerMovePlaneList.Count; i++)
+                {
+                    if (playerMovePlaneList[i].gameObject.activeSelf == true)
+                    {
+                        playerMovePlaneList[i].Destroy();
+                    }
+                }
+            }
+        }
     }
+
+    // Astar 관련 함수
+    //----------------------------------------------------------
     protected override bool OpenListAddCondition(int checkX, int checkZ)
     {
         // 플레이어가 움직이는 상하좌우 범위를 벗어나지 않고
@@ -128,26 +118,40 @@ public class PlayerMove : AStar
         }
         return false;
     }
-    
-    // 플래이어 판 회수
-    public void RemovePlayerPlane()
+    protected override void SetPathFinding()
     {
-        if (playerMovePlaneList.Count > 0)
+        // NodeArray의 크기 정해주고, isWall, x, z 대입
+        sizeX = topRight.x - bottomLeft.x;
+        sizeZ = topRight.z - bottomLeft.z;
+        NodeArray = new Node[sizeX, sizeZ];
+
+        for (int i = 0; i < sizeX * sizeZ; i++)
         {
-            if (playerMovePlaneList[playerMovePlaneList.Count - 1].gameObject.activeSelf == true)
+            int map2dObject = 0;
+            int map2dX = (int)transform.position.x + ((i / (radiusMove * 2 + 1)) - radiusMove);
+            int map2dZ = (int)transform.position.z + ((i % (radiusMove * 2 + 1)) - radiusMove);
+
+            try
             {
-                for (int i = 0; i < playerMovePlaneList.Count; i++)
-                {
-                    if (playerMovePlaneList[i].gameObject.activeSelf == true)
-                    {
-                        playerMovePlaneList[i].Destroy();
-                    }
-                }
+                map2dObject = gameSupporter.Map2D[map2dX, map2dZ];
             }
+            catch { }
+
+            bool isWall = false;
+            if ((int)GameSupporter.map2DObject.wall == map2dObject || (int)GameSupporter.map2DObject.moster == map2dObject)
+            {
+                isWall = true;
+            }
+
+            NodeArray[i / sizeZ, i % sizeZ] = new Node(isWall, (i / sizeZ) + bottomLeft.x, (i % sizeZ) + bottomLeft.z);
         }
+
+        // 시작과 끝 노드, 열린리스트와 닫힌리스트, 마지막리스트 초기화
+        StartNode = NodeArray[startPos.x - bottomLeft.x, startPos.z - bottomLeft.z];
+        TargetNode = NodeArray[targetPos.x - bottomLeft.x, targetPos.z - bottomLeft.z];
     }
 
-    // PlayerMovePlane 관련 함수
+    // PlayerMovePlane pool 관련 함수
     //-------------------------------------------------------
     private PlayerMovePlane CreatePlayerMovePlane()
     {

@@ -1,21 +1,37 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading;
 using UnityEngine;
 using UnityEngine.Pool;
 
 public class GeneralSkills : Skill
 {
-    private Vector3 _Direction = Vector3.up;
-    private float _Speed = 3f;
-
     private IObjectPool<Skill> _ManagedPool;
-    void Update()
+    Transform _monster = null;
+    private void Update()
     {
-        transform.Translate(_Direction * Time.deltaTime * _Speed);
+        if(_monster != null)
+        {
+            playerLookAt.gameObject.transform.LookAt(_monster);
+            player.transform.rotation = Quaternion.Slerp(player.transform.rotation, Quaternion.LookRotation(_monster.position-player.transform.position), 1f);
+            print(player.transform.rotation);
+            print(playerLookAt.transform.rotation);
+            if(player.transform.rotation == playerLookAt.transform.rotation)
+            {
+                gameObject.transform.position = new Vector3(
+                                player.gameObject.transform.position.x,
+                                player.gameObject.transform.position.y,
+                                player.gameObject.transform.position.z + 1
+                                );
+                gameObject.SetActive(true);
+                transform.Translate(Vector3.forward * Time.deltaTime * 3f);
+            }
+        }
     }
-    public override void SkillCasting()
+    public override void SkillCasting(Transform monster)
     {
-        transform.gameObject.SetActive(true);
+        _monster = monster;
+        
     }
     protected override void OnCollisionEnter(Collision collision)
     {

@@ -18,7 +18,7 @@ public class PlayerATK : MonoBehaviour
 
     private void Awake()
     {
-        gameSupporter = FindObjectOfType<GameSupporter>();
+        gameSupporter = FindAnyObjectByType<GameSupporter>();
 
         SkillSelectionPrefab = Resources.Load("Prefab/SkillSelection", typeof(GameObject)) as GameObject;
         SkillSelectionPool = new ObjectPool<SkillSelection>

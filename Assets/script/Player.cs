@@ -6,5 +6,4 @@ using UnityEngine;
 [RequireComponent(typeof(PlayerMove), typeof(PlayerATK))]
 public class Player : MonoBehaviour
 {
-
 }
