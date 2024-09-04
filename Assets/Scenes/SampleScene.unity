@@ -749,8 +749,7 @@ GameObject:
   - component: {fileID: 974699535}
   - component: {fileID: 974699534}
   - component: {fileID: 974699539}
-  - component: {fileID: 974699538}
-  - component: {fileID: 974699540}
+  - component: {fileID: 974699542}
   - component: {fileID: 974699541}
   m_Layer: 0
   m_Name: Player
@@ -845,18 +844,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &974699538
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 974699532}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 94198e78dbdfa214d9db07006f6f2baf, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &974699539
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -867,18 +854,6 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7b9a61a63d856c34e940be5df7b5319a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &974699540
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 974699532}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5f9dac9fa49616740b2c6e8131dcf00d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!54 &974699541
@@ -908,6 +883,19 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 10
   m_CollisionDetection: 0
+--- !u!114 &974699542
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 974699532}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 17bef9c3a663dc34b8172b78bf8bf33e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  skillSelectionList: []
 --- !u!1 &1072445394
 GameObject:
   m_ObjectHideFlags: 0
@@ -1180,6 +1168,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4cc107f56c4cce84f814ed12e4f2409c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  state: 0
 --- !u!114 &1347647657
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1301,7 +1290,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 974699540}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: PlayerATK, Assembly-CSharp
         m_MethodName: OnClickGeneralSkills
         m_Mode: 1
@@ -1313,7 +1302,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 974699538}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: PlayerMove, Assembly-CSharp
         m_MethodName: RemovePlayerPlane
         m_Mode: 1

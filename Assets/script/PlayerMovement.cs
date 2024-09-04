@@ -1,15 +1,24 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Pool;
 
-public class PlayerMove : AStar
+public class PlayerMovement : AStar
 {
     private IObjectPool<PlayerMovePlane> playerMovePlanePool;
     private GameObject playerMovePlanePrefab;
     private GameObject playerPlaneStandard;
+
     private List<PlayerMovePlane> playerMovePlaneList = new List<PlayerMovePlane>();
+    
+    private IObjectPool<SkillSelection> SkillSelectionPool;
+    private GameObject SkillSelectionPrefab;
+    [SerializeField]
+    private List<SkillSelection> skillSelectionList = new List<SkillSelection>();
+
+    private IObjectPool<Skill> generalSkillPool;
+    private GameObject generalSkillPrefab;
+    private Skill generalSkills;
     public RaycastHit Hit { get; set; }
 
     // 이동거리
@@ -22,20 +31,53 @@ public class PlayerMove : AStar
         playerMovePlanePrefab = Resources.Load("Prefab/PlayerMovePlane", typeof(GameObject)) as GameObject;
         playerMovePlanePool = new ObjectPool<PlayerMovePlane>
             (
-            CreatePlayerMovePlane, 
-            OnGetPlayerMovePlane, 
-            OnReleasePlayerMovePlane, 
+            CreatePlayerMovePlane,
+            OnGetPlayerMovePlane,
+            OnReleasePlayerMovePlane,
             OnDestroyPlayerMovePlane,
             maxSize: 500
             );
+
+
+        SkillSelectionPrefab = Resources.Load("Prefab/SkillSelection", typeof(GameObject)) as GameObject;
+        SkillSelectionPool = new ObjectPool<SkillSelection>
+            (
+            CreateSkillSelection,
+            OnGetSkillSelection,
+            OnReleaseSkillSelection,
+            OnDestroySkillSelection,
+            maxSize: 20
+            );
+
+        generalSkillPrefab = Resources.Load("Prefab/Skill/GeneralSkills", typeof(GameObject)) as GameObject;
+        generalSkillPool = new ObjectPool<Skill>
+            (
+            CreateSkill,
+            OnGetSkill,
+            OnReleaseSkill,
+            OnDestroySkill,
+            maxSize: 20
+            );
     }
+
+    public void OnClickGeneralSkills()
+    {
+        if (gameSupporter.skillState is not Skill)
+        {
+            SetSkillSelection();
+            generalSkills = generalSkillPool.Get();
+            gameSupporter.skillState = generalSkills;
+        }
+    }
+
+
     public void Move()
     {
         gameSupporter.Map2D[(int)transform.position.x, (int)transform.position.z] = (int)GameSupporter.map2DObject.noting;
 
         transform.position = new Vector3(Hit.transform.position.x, transform.position.y, Hit.transform.position.z);
         playerPlaneStandard.transform.position = new Vector3(transform.position.x, 1, transform.position.z);
-        
+
 
         gameSupporter.Map2D[(int)transform.position.x, (int)transform.position.z] = (int)GameSupporter.map2DObject.player;
     }
@@ -151,6 +193,74 @@ public class PlayerMove : AStar
         TargetNode = NodeArray[targetPos.x - bottomLeft.x, targetPos.z - bottomLeft.z];
     }
 
+    // SkillSelection Pool 관련 함수
+    //-----------------------------------------------------------
+    public void SetSkillSelection()
+    {
+        for (int i = 0; i < gameSupporter.spawnMonsters.Count; i++)
+        {
+            skillSelectionList.Add(SkillSelectionPool.Get());
+            skillSelectionList[i].transform.position = gameSupporter.spawnMonsters[i].transform.position;
+            skillSelectionList[i].transform.parent = gameSupporter.spawnMonsters[i].transform;
+        }
+    }
+    public void RemoveSkillSelection()
+    {
+        if (skillSelectionList.Count > 0)
+        {
+            if (skillSelectionList[skillSelectionList.Count - 1].gameObject.activeSelf == true)
+            {
+                for (int i = 0; i < gameSupporter.spawnMonsters.Count; i++)
+                {
+                    if (skillSelectionList[i].gameObject.activeSelf == true)
+                    {
+                        skillSelectionList[i].Destroy();
+                    }
+                }
+            }
+        }
+
+    }
+    private SkillSelection CreateSkillSelection()
+    {
+        SkillSelection Selection = Instantiate(SkillSelectionPrefab).GetComponent<SkillSelection>();
+        Selection.SetManagedPool(SkillSelectionPool);
+        return Selection;
+    }
+    private void OnGetSkillSelection(SkillSelection Selection)
+    {
+        Selection.gameObject.SetActive(true);
+    }
+    private void OnReleaseSkillSelection(SkillSelection Selection)
+    {
+        Selection.gameObject.SetActive(false);
+    }
+    private void OnDestroySkillSelection(SkillSelection Selection)
+    {
+        Destroy(Selection.gameObject);
+    }
+
+    // Skill Pool 관련 함수
+    //-----------------------------------------------------------
+    private Skill CreateSkill()
+    {
+        Skill skill = Instantiate(generalSkillPrefab).GetComponent<Skill>();
+        skill.SetManagedPool(generalSkillPool);
+        return skill;
+    }
+    private void OnGetSkill(Skill skill)
+    {
+        skill.gameObject.SetActive(false);
+    }
+    private void OnReleaseSkill(Skill skill)
+    {
+        skill.gameObject.SetActive(false);
+    }
+    private void OnDestroySkill(Skill skill)
+    {
+        Destroy(skill.gameObject);
+    }
+
     // PlayerMovePlane pool 관련 함수
     //-------------------------------------------------------
     private PlayerMovePlane CreatePlayerMovePlane()
@@ -178,4 +288,3 @@ public class PlayerMove : AStar
         return Mathf.Sqrt((pythA * pythA) + (pythB * pythB));
     }
 }
-
