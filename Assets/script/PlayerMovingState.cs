@@ -13,13 +13,12 @@ public class PlayerMovingState : IState
     public PlayerMovingState(PlayerMovement playerMovement)
     {
         _PlayerMovement = playerMovement;
-        Debug.Log(_PlayerMovement);
     }
     public void Enter()
     {
         _PlayerMovement.SetPlayerPlane();
     }
-    public void Update()
+    public void IStateUpdate()
     {
         if (Input.GetMouseButtonDown(0))
         {
@@ -31,8 +30,9 @@ public class PlayerMovingState : IState
 
                 if (hit.transform.name.StartsWith("PlayerMovePlane"))
                 {
+                    _PlayerMovement.RemovePlayerPlane();
                     _PlayerMovement.Move();
-                    GameManager.Instance.state = GameManager.State.Idle;
+                    GameManager.Instance.playerState = GameManager.PlayerState.Idle;
                 }
             }
         }

@@ -8,17 +8,13 @@ public class PlayerMovement : AStar
     private IObjectPool<PlayerMovePlane> playerMovePlanePool;
     private GameObject playerMovePlanePrefab;
     private GameObject playerPlaneStandard;
-
     private List<PlayerMovePlane> playerMovePlaneList = new List<PlayerMovePlane>();
     
     private IObjectPool<SkillSelection> SkillSelectionPool;
     private GameObject SkillSelectionPrefab;
-    [SerializeField]
     private List<SkillSelection> skillSelectionList = new List<SkillSelection>();
 
-    private IObjectPool<Skill> generalSkillPool;
-    private GameObject generalSkillPrefab;
-    private Skill generalSkills;
+    private SkillTest skillTest;
     public RaycastHit Hit { get; set; }
 
     // 이동거리
@@ -38,7 +34,6 @@ public class PlayerMovement : AStar
             maxSize: 500
             );
 
-
         SkillSelectionPrefab = Resources.Load("Prefab/SkillSelection", typeof(GameObject)) as GameObject;
         SkillSelectionPool = new ObjectPool<SkillSelection>
             (
@@ -49,40 +44,28 @@ public class PlayerMovement : AStar
             maxSize: 20
             );
 
-        generalSkillPrefab = Resources.Load("Prefab/Skill/GeneralSkills", typeof(GameObject)) as GameObject;
-        generalSkillPool = new ObjectPool<Skill>
-            (
-            CreateSkill,
-            OnGetSkill,
-            OnReleaseSkill,
-            OnDestroySkill,
-            maxSize: 20
-            );
+        skillTest = GetComponent<SkillTest>();
     }
-
-    public void OnClickGeneralSkills()
+    
+    public void OnClickSkillTest()
     {
-        if (gameSupporter.skillState is not Skill)
-        {
-            SetSkillSelection();
-            generalSkills = generalSkillPool.Get();
-            gameSupporter.skillState = generalSkills;
-        }
+        GameManager.Instance.playerState = GameManager.PlayerState.Skill;
+        GameManager.Instance.skillState = skillTest;
     }
-
 
     public void Move()
     {
-        gameSupporter.Map2D[(int)transform.position.x, (int)transform.position.z] = (int)GameSupporter.map2DObject.noting;
+        GameManager.Instance.Map2D[(int)transform.position.x, (int)transform.position.z] = (int)GameManager.map2DObject.noting;
 
         transform.position = new Vector3(Hit.transform.position.x, transform.position.y, Hit.transform.position.z);
         playerPlaneStandard.transform.position = new Vector3(transform.position.x, 1, transform.position.z);
 
 
-        gameSupporter.Map2D[(int)transform.position.x, (int)transform.position.z] = (int)GameSupporter.map2DObject.player;
+        GameManager.Instance.Map2D[(int)transform.position.x, (int)transform.position.z] = (int)GameManager.map2DObject.player;
     }
 
-    // 플레이어 판 세팅
+    // 플레이어 판 관련 함수
+    //----------------------------------------------------------
     public void SetPlayerPlane()
     {
         Vector3Int adj = new Vector3Int((int)playerPlaneStandard.transform.position.x - radiusMove, 0, (int)playerPlaneStandard.transform.position.z - radiusMove);
@@ -97,9 +80,9 @@ public class PlayerMovement : AStar
                 if (X != radiusMove || Z != radiusMove)
                 {
                     // 맵을 넘어가면 그에 해당한는 값이 Map2D에 존재하지 않아 try catch로 해결
-                    if (gameSupporter.Map2D[adj.x + X, adj.z + Z] != (int)GameSupporter.map2DObject.wall && gameSupporter.Map2D[adj.x + X, adj.z + Z] != (int)GameSupporter.map2DObject.moster)
+                    if (GameManager.Instance.Map2D[adj.x + X, adj.z + Z] != (int)GameManager.map2DObject.wall && GameManager.Instance.Map2D[adj.x + X, adj.z + Z] != (int)GameManager.map2DObject.moster)
                     {
-                        if (Mathf.FloorToInt(Pythagoras(X - radiusMove, Z - radiusMove)) <= radiusMove)
+                        if (Mathf.FloorToInt(Mathf.Sqrt(((X - radiusMove) * (X - radiusMove)) + (Z - radiusMove) * (Z - radiusMove))) <= radiusMove)
                         {
                             PathFinding(
                                 new Vector3Int(radiusMove, 0, radiusMove),
@@ -120,7 +103,6 @@ public class PlayerMovement : AStar
             catch { }
         }
     }
-    // 플레이어 판 회수
     public void RemovePlayerPlane()
     {
         if (playerMovePlaneList.Count > 0)
@@ -138,6 +120,35 @@ public class PlayerMovement : AStar
         }
     }
 
+    // 스킬 판 관련 함수
+    //----------------------------------------------------------
+    public void SetSkillSelection()
+    {
+        for (int i = 0; i < GameManager.Instance.spawnMonsters.Count; i++)
+        {
+            skillSelectionList.Add(SkillSelectionPool.Get());
+            skillSelectionList[i].transform.position = GameManager.Instance.spawnMonsters[i].transform.position;
+            skillSelectionList[i].transform.parent = GameManager.Instance.spawnMonsters[i].transform;
+        }
+    }
+    public void RemoveSkillSelection()
+    {
+        if (skillSelectionList.Count > 0)
+        {
+            if (skillSelectionList[skillSelectionList.Count - 1].gameObject.activeSelf == true)
+            {
+                for (int i = 0; i < GameManager.Instance.spawnMonsters.Count; i++)
+                {
+                    if (skillSelectionList[i].gameObject.activeSelf == true)
+                    {
+                        skillSelectionList[i].Destroy();
+                    }
+                }
+            }
+        }
+
+    }
+
     // Astar 관련 함수
     //----------------------------------------------------------
     protected override bool OpenListAddCondition(int checkX, int checkZ)
@@ -146,7 +157,7 @@ public class PlayerMovement : AStar
         if (checkX >= bottomLeft.x && checkX < topRight.x && checkZ >= bottomLeft.z && checkZ < topRight.z)
         {
             // 맵을 벗어나지 않고
-            if ((int)transform.position.x + (checkX - radiusMove) < gameSupporter.MapSizeX && (int)transform.position.z + (checkZ - radiusMove) < gameSupporter.MapSizeZ)
+            if ((int)transform.position.x + (checkX - radiusMove) < GameManager.Instance.MapSizeX && (int)transform.position.z + (checkZ - radiusMove) < GameManager.Instance.MapSizeZ)
             {
                 if ((int)transform.position.x + (checkX - radiusMove) >= 0 && (int)transform.position.z + (checkZ - radiusMove) >= 0)
                 {
@@ -175,12 +186,12 @@ public class PlayerMovement : AStar
 
             try
             {
-                map2dObject = gameSupporter.Map2D[map2dX, map2dZ];
+                map2dObject = GameManager.Instance.Map2D[map2dX, map2dZ];
             }
             catch { }
 
             bool isWall = false;
-            if ((int)GameSupporter.map2DObject.wall == map2dObject || (int)GameSupporter.map2DObject.moster == map2dObject)
+            if ((int)GameManager.map2DObject.wall == map2dObject || (int)GameManager.map2DObject.moster == map2dObject)
             {
                 isWall = true;
             }
@@ -192,35 +203,9 @@ public class PlayerMovement : AStar
         StartNode = NodeArray[startPos.x - bottomLeft.x, startPos.z - bottomLeft.z];
         TargetNode = NodeArray[targetPos.x - bottomLeft.x, targetPos.z - bottomLeft.z];
     }
-
+    
     // SkillSelection Pool 관련 함수
-    //-----------------------------------------------------------
-    public void SetSkillSelection()
-    {
-        for (int i = 0; i < gameSupporter.spawnMonsters.Count; i++)
-        {
-            skillSelectionList.Add(SkillSelectionPool.Get());
-            skillSelectionList[i].transform.position = gameSupporter.spawnMonsters[i].transform.position;
-            skillSelectionList[i].transform.parent = gameSupporter.spawnMonsters[i].transform;
-        }
-    }
-    public void RemoveSkillSelection()
-    {
-        if (skillSelectionList.Count > 0)
-        {
-            if (skillSelectionList[skillSelectionList.Count - 1].gameObject.activeSelf == true)
-            {
-                for (int i = 0; i < gameSupporter.spawnMonsters.Count; i++)
-                {
-                    if (skillSelectionList[i].gameObject.activeSelf == true)
-                    {
-                        skillSelectionList[i].Destroy();
-                    }
-                }
-            }
-        }
-
-    }
+    //----------------------------------------------------------
     private SkillSelection CreateSkillSelection()
     {
         SkillSelection Selection = Instantiate(SkillSelectionPrefab).GetComponent<SkillSelection>();
@@ -239,30 +224,9 @@ public class PlayerMovement : AStar
     {
         Destroy(Selection.gameObject);
     }
-
-    // Skill Pool 관련 함수
-    //-----------------------------------------------------------
-    private Skill CreateSkill()
-    {
-        Skill skill = Instantiate(generalSkillPrefab).GetComponent<Skill>();
-        skill.SetManagedPool(generalSkillPool);
-        return skill;
-    }
-    private void OnGetSkill(Skill skill)
-    {
-        skill.gameObject.SetActive(false);
-    }
-    private void OnReleaseSkill(Skill skill)
-    {
-        skill.gameObject.SetActive(false);
-    }
-    private void OnDestroySkill(Skill skill)
-    {
-        Destroy(skill.gameObject);
-    }
-
+    
     // PlayerMovePlane pool 관련 함수
-    //-------------------------------------------------------
+    //----------------------------------------------------------
     private PlayerMovePlane CreatePlayerMovePlane()
     {
         PlayerMovePlane plane = Instantiate(playerMovePlanePrefab).GetComponent<PlayerMovePlane>();
@@ -282,9 +246,4 @@ public class PlayerMovement : AStar
         Destroy(plane.gameObject);
     }
 
-    //피타고라스 함수
-    private float Pythagoras(int pythA, int pythB)
-    {
-        return Mathf.Sqrt((pythA * pythA) + (pythB * pythB));
-    }
 }

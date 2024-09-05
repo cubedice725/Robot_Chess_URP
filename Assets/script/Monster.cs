@@ -6,7 +6,6 @@ using UnityEngine;
 [RequireComponent(typeof(MonsterMove))]
 public class Monster : MonoBehaviour
 {
-    protected GameSupporter gameSupporter;
     protected int HP { get; set; }
     protected int ATK { get; set; }
     protected int Defense { get; set; }
@@ -14,7 +13,6 @@ public class Monster : MonoBehaviour
 
     public void Awake()
     {
-        gameSupporter = FindObjectOfType<GameSupporter>();
         HP = 4;
         ATK = 1;
         Defense = 1;

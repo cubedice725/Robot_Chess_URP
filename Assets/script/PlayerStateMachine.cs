@@ -32,11 +32,11 @@ public class PlayerStateMachine
         nextState.Enter();
 
     }
-    public void Update()
+    public void PlayerStateMachineUpdate()
     {
         if (CurrentState != null) 
         {
-            CurrentState.Update();
+            CurrentState.IStateUpdate();
         }
     }
 }

@@ -18,13 +18,13 @@ public class MonsterMove : AStar
     
     public void Move()
     {
-        gameSupporter.Map2D[(int)transform.position.x, (int)transform.position.z] = (int)GameSupporter.map2DObject.noting;
+        GameManager.Instance.Map2D[(int)transform.position.x, (int)transform.position.z] = (int)GameManager.map2DObject.noting;
         
         PathFinding(
             new Vector3Int((int)transform.position.x, (int)transform.position.y, (int)transform.position.z),
             new Vector3Int((int)player.transform.position.x, (int)player.transform.position.y, (int)player.transform.position.z),
             Vector3Int.zero,
-            new Vector3Int(gameSupporter.MapSizeX, 0, gameSupporter.MapSizeZ)
+            new Vector3Int(GameManager.Instance.MapSizeX, 0, GameManager.Instance.MapSizeZ)
             );
 
         if (FinalNodeList.Count < AttackDistance + 3 && FinalNodeList.Count != 0)
@@ -42,7 +42,7 @@ public class MonsterMove : AStar
         {
             Debug.Log("플레이어를 찾을수 없음");
         }
-        gameSupporter.Map2D[(int)transform.position.x, (int)transform.position.z] = (int)GameSupporter.map2DObject.moster;
+        GameManager.Instance.Map2D[(int)transform.position.x, (int)transform.position.z] = (int)GameManager.map2DObject.moster;
     }
     public virtual void attack()
     {

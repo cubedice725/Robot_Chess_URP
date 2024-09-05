@@ -18,7 +18,6 @@ public class AStar : MonoBehaviour
 {
     protected List<Node> FinalNodeList;
     protected List<Node> OpenList, ClosedList;
-    protected GameSupporter gameSupporter;
     protected Player player;
     protected Node[,] NodeArray;
     protected Node StartNode, TargetNode, CurNode;
@@ -30,7 +29,6 @@ public class AStar : MonoBehaviour
 
     protected virtual void Awake()
     {
-        gameSupporter = FindObjectOfType<GameSupporter>();
         player = FindObjectOfType<Player>();
     }
     protected virtual void SetPathFinding()
@@ -43,7 +41,7 @@ public class AStar : MonoBehaviour
         for (int i = 0; i < sizeX * sizeZ; i++)
         {
             bool isWall = false;
-            if ((int)GameSupporter.map2DObject.wall == gameSupporter.Map2D[i / sizeZ, i % sizeZ] || (int)GameSupporter.map2DObject.moster == gameSupporter.Map2D[i / sizeZ, i % sizeZ])
+            if ((int)GameManager.map2DObject.wall == GameManager.Instance.Map2D[i / sizeZ, i % sizeZ] || (int)GameManager.map2DObject.moster == GameManager.Instance.Map2D[i / sizeZ, i % sizeZ])
             {
                 isWall = true;
             }

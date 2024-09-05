@@ -3,18 +3,47 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Pool;
 
-public abstract class Skill : MonoBehaviour
+public abstract class Skill : MonoBehaviour, IState
 {
-    protected Player player;
-    protected PlayerLookAt playerLookAt;
+    protected IObjectPool<SkillObject> skillObjectPool;
+    protected GameObject skillObjectlPrefab;
+    protected SkillObject skillObject;
+    protected string prefabObject;
+    protected PlayerMovement playerMovement;
 
-    protected void Awake()
+    protected virtual void Awake()
     {
-        player = FindAnyObjectByType<Player>();
-        playerLookAt = FindAnyObjectByType<PlayerLookAt>();
+        playerMovement = FindAnyObjectByType<PlayerMovement>();
+        skillObjectlPrefab = Resources.Load(prefabObject, typeof(GameObject)) as GameObject;
+        skillObjectPool = new ObjectPool<SkillObject>
+            (
+            CreateSkillObject,
+            OnGetSkillObject,
+            OnReleaseSkillObject,
+            OnDestroySkillObject,
+            maxSize: 20
+            );
     }
-    protected abstract void OnCollisionEnter(Collision collision);
-    public abstract void SkillCasting(Transform monster);
-    public abstract void SetManagedPool(IObjectPool<Skill> pool);
-    public abstract void Destroy();
+    public abstract void Enter();
+    public abstract void IStateUpdate();
+    public abstract void Exit();
+
+    protected SkillObject CreateSkillObject()
+    {
+        SkillObject skillObject = Instantiate(skillObjectlPrefab).GetComponent<SkillObject>();
+        skillObject.SetManagedPool(skillObjectPool);
+        return skillObject;
+    }
+    protected void OnGetSkillObject(SkillObject skillObject)
+    {
+        skillObject.gameObject.SetActive(true);
+    }
+    protected void OnReleaseSkillObject(SkillObject skillObject)
+    {
+        skillObject.gameObject.SetActive(false);
+    }
+    protected void OnDestroySkillObject(SkillObject skillObject)
+    {
+        Destroy(skillObject.gameObject);
+    }
 }

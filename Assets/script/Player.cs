@@ -18,18 +18,18 @@ public class Player : MonoBehaviour
     }
     private void Update()
     {
-        if (GameManager.Instance.state == GameManager.State.Idle) 
+        if (GameManager.Instance.playerState == GameManager.PlayerState.Idle) 
         {
             playerStateMachine.TransitionTo(playerStateMachine.playerIdleState);
         }
-        else if (GameManager.Instance.state == GameManager.State.Move)
+        else if (GameManager.Instance.playerState == GameManager.PlayerState.Move)
         {
             playerStateMachine.TransitionTo(playerStateMachine.playerMovingState);
         }
-        else if (GameManager.Instance.state == GameManager.State.Skill)
+        else if (GameManager.Instance.playerState == GameManager.PlayerState.Skill)
         {
             playerStateMachine.TransitionTo(playerStateMachine.playerSkillCastingState);
         }
-        playerStateMachine.Update();
+        playerStateMachine.PlayerStateMachineUpdate();
     }
 }

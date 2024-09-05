@@ -14,7 +14,6 @@ public class Map : MonoBehaviour
     // odb: object Detection Box
     private IObjectPool<ObjectDetectionBox> ODBPool;
 
-    private GameSupporter gameSupporter;
     private GameObject OdbParent;
     private GameObject OdbPrefab;
     private List<ObjectDetectionBox> OdbList = new List<ObjectDetectionBox>();
@@ -23,12 +22,11 @@ public class Map : MonoBehaviour
     private void Awake()
     {
         // 필요한 컴포넌트, 프리펩 생성
-        gameSupporter = FindObjectOfType<GameSupporter>();
         OdbParent = GameObject.Find("Object Detection Box");
         OdbPrefab = Resources.Load("Prefab/Object Detection Box", typeof(GameObject)) as GameObject;
 
         // 해당 변수는 컴파일시 스크립트 순서 불분명으로 여기에 작성
-        gameSupporter.Map2D = new int[gameSupporter.MapSizeX, gameSupporter.MapSizeZ];
+        GameManager.Instance.Map2D = new int[GameManager.Instance.MapSizeX, GameManager.Instance.MapSizeZ];
 
         ODBPool = new ObjectPool<ObjectDetectionBox>
             (
@@ -40,7 +38,7 @@ public class Map : MonoBehaviour
             );
 
         // object Detection Box 맵 크기만큼 생성
-        for (int i = 0; i < gameSupporter.MapSizeX * gameSupporter.MapSizeZ; i++)
+        for (int i = 0; i < GameManager.Instance.MapSizeX * GameManager.Instance.MapSizeZ; i++)
         {
             OdbList.Add(ODBPool.Get());
             OdbList[i].transform.parent = OdbParent.transform;
@@ -49,9 +47,9 @@ public class Map : MonoBehaviour
         // 게임에 필요한 Object생성 혹은 설정
         // CheckBox를 생성하여 확인할 준비를 함
         // 해당 함수는 필수적으로 Unity life cycle CollisionXXX 이전에 생성해야함
-        for (int i = 0; i < gameSupporter.MapSizeX * gameSupporter.MapSizeZ; i++)
+        for (int i = 0; i < GameManager.Instance.MapSizeX * GameManager.Instance.MapSizeZ; i++)
         {
-            OdbList[i].transform.position = new Vector3(i / gameSupporter.MapSizeZ, 1, i % gameSupporter.MapSizeZ);
+            OdbList[i].transform.position = new Vector3(i / GameManager.Instance.MapSizeZ, 1, i % GameManager.Instance.MapSizeZ);
             OdbList[i].gameObject.SetActive(true);
         }
     }

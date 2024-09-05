@@ -5,16 +5,16 @@ using UnityEngine;
 
 public class PlayerIdleState : IState
 {
-    private PlayerMovement playerMovement;
+    private PlayerMovement _PlayerMovement;
     public PlayerIdleState(PlayerMovement playerMovement)
     {
-        this.playerMovement = playerMovement;
+        _PlayerMovement = playerMovement;
     }
     public void Enter()
     {
 
     }
-    public void Update()
+    public void IStateUpdate()
     {
 
     }

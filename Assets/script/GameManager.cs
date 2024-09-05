@@ -1,42 +1,42 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
-using System.Threading;
-using Unity.Burst.CompilerServices;
-using Unity.VisualScripting;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
-using UnityEngine.UIElements;
-using static UnityEditor.ShaderGraph.Internal.KeywordDependentCollection;
 
 public class GameManager : MonoBehaviour
 {
-    public enum State
+    public enum PlayerState
     { 
         Idle,
         Move,
         Skill
     }
+    public enum map2DObject
+    {
+        noting = 0,
+        wall = 1,
+        player = 2,
+        moster = 3
+    }
+
+    public int MapSizeX { get; set; } = 11;
+    public int MapSizeZ { get; set; } = 15;
+    public int[,] Map2D { get; set; }
+
+    public List<GameObject> spawnMonsters = new List<GameObject>();
+    public Skill skillState;
 
     private static GameManager _instance;
 
-
-    private GameSupporter gameSupporter;
     private MonsterMove monsterMove;
     private PlayerMovement playerMovement;
-    private MiniMap miniMap;
     private Stage1 stage1;
-    private Player player;
     private Map map;
-    private SkillCasting skillCasting;
-    private PlayerATK playerATK;
     private RaycastHit hit;
 
     private bool MapCheck = true;
     private bool turnStart = false;
     private bool turnEnd = false;
-    public State state = State.Idle;
+    public PlayerState playerState = PlayerState.Idle;
 
     public static GameManager Instance
     {
@@ -68,14 +68,10 @@ public class GameManager : MonoBehaviour
         // 아래의 함수를 사용하여 씬이 전환되더라도 선언되었던 인스턴스가 파괴되지 않는다.
         DontDestroyOnLoad(gameObject);
         
-        gameSupporter = GetComponent<GameSupporter>();
         monsterMove = FindAnyObjectByType<MonsterMove>();
         playerMovement = FindAnyObjectByType<PlayerMovement>();
         stage1 = GetComponent<Stage1>();
-        player = FindAnyObjectByType<Player>();
         map = FindAnyObjectByType<Map>();
-        skillCasting = FindAnyObjectByType<SkillCasting>();
-        playerATK = FindAnyObjectByType<PlayerATK>();
     }
 
     private void Update()
@@ -100,35 +96,19 @@ public class GameManager : MonoBehaviour
             if (Physics.Raycast(ray, out hit, 1000f))
             {
                 playerMovement.Hit = hit;
-                //print(hit.transform.name);
                 if (hit.transform.name == "Player")
                 {
-                    Instance.state = State.Move;
-                }
-                else if (hit.transform.name.StartsWith("SkillSelection"))
-                {
-                    if (gameSupporter.skillState is Skill)
-                    {
-                        //playerMovement.RemovePlayerPlane();
-                        //playerATK.RemoveSkillSelection();
-                        Instance.state = State.Skill;
-
-                        //skillCasting.SkillGet(gameSupporter.skillState, hit.transform.parent.transform);
-                        //gameSupporter.skillState = null;
-                    }
+                    Instance.playerState = PlayerState.Move;
                 }
                 else
                 {
-                    //playerMovement.RemovePlayerPlane();
-                    //playerATK.RemoveSkillSelection();
-
-                    //gameSupporter.skillState = null;
+                    Instance.playerState = PlayerState.Idle;
                 }
             }
         }
         if (Input.GetMouseButtonDown(1))
         {
-            print(gameSupporter.skillState);
+
         }
         if (turnEnd)
         {
