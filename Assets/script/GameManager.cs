@@ -12,10 +12,10 @@ public class GameManager : MonoBehaviour
     }
     public enum map2DObject
     {
-        noting = 0,
-        wall = 1,
-        player = 2,
-        moster = 3
+        noting,
+        wall,
+        player,
+        moster
     }
 
     public int MapSizeX { get; set; } = 11;
@@ -31,11 +31,10 @@ public class GameManager : MonoBehaviour
     private PlayerMovement playerMovement;
     private Stage1 stage1;
     private Map map;
-    private RaycastHit hit;
 
     private bool MapCheck = true;
-    private bool turnStart = false;
-    private bool turnEnd = false;
+    public bool turnStart = false;
+    public bool turnEnd = false;
     public PlayerState playerState = PlayerState.Idle;
 
     public static GameManager Instance
@@ -89,28 +88,8 @@ public class GameManager : MonoBehaviour
             turnStart = false;
             turnEnd = true;
         }
-        if (Input.GetMouseButtonDown(0))
-        {
-            // 메인 카메라를 통해 마우스 클릭한 곳의 ray 정보를 가져옴
-            var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            if (Physics.Raycast(ray, out hit, 1000f))
-            {
-                playerMovement.Hit = hit;
-                if (hit.transform.name == "Player")
-                {
-                    Instance.playerState = PlayerState.Move;
-                }
-                else
-                {
-                    Instance.playerState = PlayerState.Idle;
-                }
-            }
-        }
-        if (Input.GetMouseButtonDown(1))
-        {
-
-        }
-        if (turnEnd)
+        
+        if (turnEnd && Instance.playerState == PlayerState.Idle)
         {
             stage1.MonstersMove();
             turnEnd = false;

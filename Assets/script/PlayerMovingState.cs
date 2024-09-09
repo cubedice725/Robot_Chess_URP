@@ -7,16 +7,16 @@ using UnityEngine;
 
 public class PlayerMovingState : IState
 {
-    private PlayerMovement _PlayerMovement;
+    private PlayerMovement _playerMovement;
     private RaycastHit hit;
 
     public PlayerMovingState(PlayerMovement playerMovement)
     {
-        _PlayerMovement = playerMovement;
+        _playerMovement = playerMovement;
     }
     public void Enter()
     {
-        _PlayerMovement.SetPlayerPlane();
+        _playerMovement.SetPlayerPlane();
     }
     public void IStateUpdate()
     {
@@ -26,12 +26,12 @@ public class PlayerMovingState : IState
             var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             if (Physics.Raycast(ray, out hit, 1000f))
             {
-                _PlayerMovement.Hit = hit;
+                _playerMovement.Hit = hit;
 
                 if (hit.transform.name.StartsWith("PlayerMovePlane"))
                 {
-                    _PlayerMovement.RemovePlayerPlane();
-                    _PlayerMovement.Move();
+                    _playerMovement.RemovePlayerPlane();
+                    _playerMovement.Move();
                     GameManager.Instance.playerState = GameManager.PlayerState.Idle;
                 }
             }
@@ -39,6 +39,6 @@ public class PlayerMovingState : IState
     }
     public void Exit()
     {
-        _PlayerMovement.RemovePlayerPlane();
+        _playerMovement.RemovePlayerPlane();
     }
 }

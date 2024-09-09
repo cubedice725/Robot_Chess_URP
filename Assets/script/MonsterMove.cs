@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
+using static GameManager;
 
 public class MonsterMove : AStar
 {
@@ -18,13 +19,13 @@ public class MonsterMove : AStar
     
     public void Move()
     {
-        GameManager.Instance.Map2D[(int)transform.position.x, (int)transform.position.z] = (int)GameManager.map2DObject.noting;
+        Instance.Map2D[(int)transform.position.x, (int)transform.position.z] = (int)map2DObject.noting;
         
         PathFinding(
             new Vector3Int((int)transform.position.x, (int)transform.position.y, (int)transform.position.z),
             new Vector3Int((int)player.transform.position.x, (int)player.transform.position.y, (int)player.transform.position.z),
             Vector3Int.zero,
-            new Vector3Int(GameManager.Instance.MapSizeX, 0, GameManager.Instance.MapSizeZ)
+            new Vector3Int(Instance.MapSizeX, 0, Instance.MapSizeZ)
             );
 
         if (FinalNodeList.Count < AttackDistance + 3 && FinalNodeList.Count != 0)
@@ -42,7 +43,7 @@ public class MonsterMove : AStar
         {
             Debug.Log("플레이어를 찾을수 없음");
         }
-        GameManager.Instance.Map2D[(int)transform.position.x, (int)transform.position.z] = (int)GameManager.map2DObject.moster;
+        Instance.Map2D[(int)transform.position.x, (int)transform.position.z] = (int)map2DObject.moster;
     }
     public virtual void attack()
     {

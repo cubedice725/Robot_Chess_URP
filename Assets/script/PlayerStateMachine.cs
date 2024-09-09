@@ -11,11 +11,11 @@ public class PlayerStateMachine
     public PlayerMovingState playerMovingState;
     public PlayerIdleState playerIdleState;
     
-    public PlayerStateMachine(PlayerMovement player)
+    public PlayerStateMachine(PlayerMovement playerMovement)
     {
-        playerSkillCastingState = new PlayerSkillCastingState(player);
-        playerMovingState = new PlayerMovingState(player);
-        playerIdleState = new PlayerIdleState(player);
+        playerSkillCastingState = new PlayerSkillCastingState();
+        playerMovingState = new PlayerMovingState(playerMovement);
+        playerIdleState = new PlayerIdleState(playerMovement);
     }
     public void Initialize(IState startingState)
     {

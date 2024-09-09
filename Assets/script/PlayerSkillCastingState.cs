@@ -2,26 +2,21 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.Burst.CompilerServices;
 using UnityEngine;
-
+using static GameManager;
 public class PlayerSkillCastingState : IState
 {
-    private PlayerMovement _PlayerMovement;
     private RaycastHit hit;
 
-    public PlayerSkillCastingState(PlayerMovement playerMovement)
-    {
-        _PlayerMovement = playerMovement;
-    }
     public void Enter()
     {
-        GameManager.Instance.skillState.Enter();
+        Instance.skillState.Enter();
     }
     public void IStateUpdate()
     {
-        GameManager.Instance.skillState.IStateUpdate();
+        Instance.skillState.IStateUpdate();
     }
     public void Exit()
     {
-        GameManager.Instance.skillState.Exit();
+        Instance.skillState.Exit();
     }
 }
