@@ -18,7 +18,7 @@ public class Stage1 : MonoBehaviour
 
     public void MonstersMove()
     {
-        GameManager.Instance.spawnMonsters[0].GetComponent<MonsterMove>().Move();
-        GameManager.Instance.spawnMonsters[1].GetComponent<MonsterMove>().Move();
+        GameManager.Instance.spawnMonsters[0].GetComponent<MonsterMovement>().Move();
+        GameManager.Instance.spawnMonsters[1].GetComponent<MonsterMovement>().Move();
     }
 }

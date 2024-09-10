@@ -7,7 +7,6 @@ public abstract class Skill : MonoBehaviour, IState
 {
     protected IObjectPool<SkillObject> skillObjectPool;
     protected GameObject skillObjectlPrefab;
-    protected SkillObject skillObject;
     protected string prefabObject;
     protected PlayerMovement playerMovement;
 
@@ -36,7 +35,7 @@ public abstract class Skill : MonoBehaviour, IState
     }
     protected void OnGetSkillObject(SkillObject skillObject)
     {
-        skillObject.gameObject.SetActive(true);
+        skillObject.gameObject.SetActive(false);
     }
     protected void OnReleaseSkillObject(SkillObject skillObject)
     {

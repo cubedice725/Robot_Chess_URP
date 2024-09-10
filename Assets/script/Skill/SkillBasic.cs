@@ -1,14 +1,14 @@
 using System.Collections;
 using System.Collections.Generic;
-using Unity.Burst.CompilerServices;
 using UnityEngine;
 
-public class SkillTest : Skill
+public class SkillBasic : Skill
 {
     RaycastHit hit;
+    bool start;
     protected override void Awake()
     {
-        prefabObject = "Prefab/Skill/SkillTestObject";
+        prefabObject = "Prefab/Skill/SkillBasicObject";
         base.Awake();
     }
     public override void Enter()
@@ -26,10 +26,25 @@ public class SkillTest : Skill
                 if (hit.transform.name.StartsWith("SkillSelection"))
                 {
                     playerMovement.RemoveSkillSelection();
-                    skillObjectPool.Get();
-                    GameManager.Instance.playerState = GameManager.PlayerState.Idle;
+                    start = true;
                 }
             }
+        }
+        if (start)
+        {
+            Skillcasting();
+        }
+    }
+    public void Skillcasting()
+    {
+        if (!playerMovement.UpdateLooking(hit.transform.position))
+        {
+            start = false;
+            var skillObject = skillObjectPool.Get();
+            skillObject.transform.position = transform.TransformDirection(Vector3.forward) + transform.position;
+            skillObject.Direction = transform.TransformDirection(Vector3.forward);
+            skillObject.gameObject.SetActive(true);
+            GameManager.Instance.playerState = GameManager.PlayerState.Idle;
         }
     }
     public override void Exit()

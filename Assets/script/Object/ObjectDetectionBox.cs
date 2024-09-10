@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Pool;
 using UnityEngine.UIElements;
+using static GameManager;
 
 public class ObjectDetectionBox : MonoBehaviour
 {
@@ -11,19 +12,19 @@ public class ObjectDetectionBox : MonoBehaviour
     {
         if (collision.transform.name.StartsWith("Map Block"))
         {
-            GameManager.Instance.Map2D[(int)transform.position.x, (int)transform.position.z] = (int)GameManager.map2DObject.wall;
+            Instance.Map2D[(int)transform.position.x, (int)transform.position.z] = (int)map2DObject.wall;
         }
         else if (collision.transform.name == "Monster")
         {
-            GameManager.Instance.Map2D[(int)transform.position.x, (int)transform.position.z] = (int)GameManager.map2DObject.moster;
+            Instance.Map2D[(int)transform.position.x, (int)transform.position.z] = (int)map2DObject.moster;
         }
         else if (collision.transform.name == "Player")
         {
-            GameManager.Instance.Map2D[(int)transform.position.x, (int)transform.position.z] = (int)GameManager.map2DObject.player;
+            Instance.Map2D[(int)transform.position.x, (int)transform.position.z] = (int)map2DObject.player;
         }
         else
         {
-            GameManager.Instance.Map2D[(int)transform.position.x, (int)transform.position.z] = (int)GameManager.map2DObject.noting;
+            Instance.Map2D[(int)transform.position.x, (int)transform.position.z] = (int)map2DObject.noting;
         }
         collision = null;
         transform.position = new Vector3(0, -100, 0);

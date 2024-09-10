@@ -1,7 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.VisionOS;
 using UnityEngine;
 using UnityEngine.Pool;
+using static GameManager;
 
 public class PlayerMovement : AStar
 {
@@ -13,12 +15,11 @@ public class PlayerMovement : AStar
     private IObjectPool<SkillSelection> SkillSelectionPool;
     private GameObject SkillSelectionPrefab;
     private List<SkillSelection> skillSelectionList = new List<SkillSelection>();
-
-    private SkillTest skillTest;
+    private SkillBasic skillBasic;
     public RaycastHit Hit { get; set; }
-
     // 이동거리
-    private int radiusMove = 4;
+    public int MovingDistance { get; set; } = 4;
+
 
     protected override void Awake()
     {
@@ -44,57 +45,75 @@ public class PlayerMovement : AStar
             maxSize: 20
             );
 
-        skillTest = GetComponent<SkillTest>();
+        skillBasic = GetComponent<SkillBasic>();
     }
-    
     public void OnClickSkillTest()
     {
-        GameManager.Instance.playerState = GameManager.PlayerState.Skill;
-        GameManager.Instance.skillState = skillTest;
+        Instance.playerState = PlayerState.Skill;
+        Instance.skillState = skillBasic;
     }
 
+    // 플레이어 움직임 관련 함수
+    //----------------------------------------------------------
+    public bool UpdateLooking(Vector3 target)
+    {
+        float stopAngle = 1.0f;
+        Vector3 direction = target - transform.position;
+        Quaternion targetRotation = Quaternion.LookRotation(direction);
+        float angle = Quaternion.Angle(transform.rotation, targetRotation);
+        // 목표를 바라보는 조건
+        if (angle > stopAngle)
+        {
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, 7f * Time.deltaTime);
+        }
+        else
+        {
+            return false;
+        }
+        return true;
+    }
     public void Move()
     {
-        GameManager.Instance.Map2D[(int)transform.position.x, (int)transform.position.z] = (int)GameManager.map2DObject.noting;
+        Instance.Map2D[(int)transform.position.x, (int)transform.position.z] = (int)map2DObject.noting;
 
         transform.position = new Vector3(Hit.transform.position.x, transform.position.y, Hit.transform.position.z);
         playerPlaneStandard.transform.position = new Vector3(transform.position.x, 1, transform.position.z);
 
 
-        GameManager.Instance.Map2D[(int)transform.position.x, (int)transform.position.z] = (int)GameManager.map2DObject.player;
+        Instance.Map2D[(int)transform.position.x, (int)transform.position.z] = (int)map2DObject.player;
     }
 
     // 플레이어 판 관련 함수
     //----------------------------------------------------------
     public void SetPlayerPlane()
     {
-        Vector3Int adj = new Vector3Int((int)playerPlaneStandard.transform.position.x - radiusMove, 0, (int)playerPlaneStandard.transform.position.z - radiusMove);
+        Vector3Int adj = new Vector3Int((int)playerPlaneStandard.transform.position.x - MovingDistance, 0, (int)playerPlaneStandard.transform.position.z - MovingDistance);
         // 지름 계산
-        int diameter = radiusMove * 2 + 1;
+        int diameter = MovingDistance * 2 + 1;
         for (int i = 0; i < diameter * diameter; i++)
         {
             int X = (i / diameter);
             int Z = (i % diameter);
             try
             {
-                if (X != radiusMove || Z != radiusMove)
+                if (X != MovingDistance || Z != MovingDistance)
                 {
                     // 맵을 넘어가면 그에 해당한는 값이 Map2D에 존재하지 않아 try catch로 해결
-                    if (GameManager.Instance.Map2D[adj.x + X, adj.z + Z] != (int)GameManager.map2DObject.wall && GameManager.Instance.Map2D[adj.x + X, adj.z + Z] != (int)GameManager.map2DObject.moster)
+                    if (Instance.Map2D[adj.x + X, adj.z + Z] != (int)map2DObject.wall && Instance.Map2D[adj.x + X, adj.z + Z] != (int)map2DObject.moster)
                     {
-                        if (Mathf.FloorToInt(Mathf.Sqrt(((X - radiusMove) * (X - radiusMove)) + (Z - radiusMove) * (Z - radiusMove))) <= radiusMove)
+                        if (Mathf.FloorToInt(Mathf.Sqrt(((X - MovingDistance) * (X - MovingDistance)) + (Z - MovingDistance) * (Z - MovingDistance))) <= MovingDistance)
                         {
                             PathFinding(
-                                new Vector3Int(radiusMove, 0, radiusMove),
+                                new Vector3Int(MovingDistance, 0, MovingDistance),
                                 new Vector3Int(X, 0, Z),
                                 Vector3Int.zero,
-                                new Vector3Int(radiusMove * 2 + 1, 0, radiusMove * 2 + 1)
+                                new Vector3Int(MovingDistance * 2 + 1, 0, MovingDistance * 2 + 1)
                             );
-                            if (FinalNodeList.Count > 1 && FinalNodeList.Count <= radiusMove + 1)
+                            if (FinalNodeList.Count > 1 && FinalNodeList.Count <= MovingDistance + 1)
                             {
                                 playerMovePlaneList.Add(playerMovePlanePool.Get());
                                 playerMovePlaneList[playerMovePlaneList.Count - 1].transform.parent = playerPlaneStandard.transform;
-                                playerMovePlaneList[playerMovePlaneList.Count - 1].transform.localPosition = new Vector3(X - radiusMove, -0.49f, Z - radiusMove);
+                                playerMovePlaneList[playerMovePlaneList.Count - 1].transform.localPosition = new Vector3(X - MovingDistance, -0.49f, Z - MovingDistance);
                             }
                         }
                     }
@@ -124,11 +143,11 @@ public class PlayerMovement : AStar
     //----------------------------------------------------------
     public void SetSkillSelection()
     {
-        for (int i = 0; i < GameManager.Instance.spawnMonsters.Count; i++)
+        for (int i = 0; i < Instance.spawnMonsters.Count; i++)
         {
             skillSelectionList.Add(SkillSelectionPool.Get());
-            skillSelectionList[i].transform.position = GameManager.Instance.spawnMonsters[i].transform.position;
-            skillSelectionList[i].transform.parent = GameManager.Instance.spawnMonsters[i].transform;
+            skillSelectionList[i].transform.position = Instance.spawnMonsters[i].transform.position;
+            skillSelectionList[i].transform.parent = Instance.spawnMonsters[i].transform;
         }
     }
     public void RemoveSkillSelection()
@@ -137,7 +156,7 @@ public class PlayerMovement : AStar
         {
             if (skillSelectionList[skillSelectionList.Count - 1].gameObject.activeSelf == true)
             {
-                for (int i = 0; i < GameManager.Instance.spawnMonsters.Count; i++)
+                for (int i = 0; i < Instance.spawnMonsters.Count; i++)
                 {
                     if (skillSelectionList[i].gameObject.activeSelf == true)
                     {
@@ -157,9 +176,9 @@ public class PlayerMovement : AStar
         if (checkX >= bottomLeft.x && checkX < topRight.x && checkZ >= bottomLeft.z && checkZ < topRight.z)
         {
             // 맵을 벗어나지 않고
-            if ((int)transform.position.x + (checkX - radiusMove) < GameManager.Instance.MapSizeX && (int)transform.position.z + (checkZ - radiusMove) < GameManager.Instance.MapSizeZ)
+            if ((int)transform.position.x + (checkX - MovingDistance) < Instance.MapSizeX && (int)transform.position.z + (checkZ - MovingDistance) < Instance.MapSizeZ)
             {
-                if ((int)transform.position.x + (checkX - radiusMove) >= 0 && (int)transform.position.z + (checkZ - radiusMove) >= 0)
+                if ((int)transform.position.x + (checkX - MovingDistance) >= 0 && (int)transform.position.z + (checkZ - MovingDistance) >= 0)
                 {
                     // 벽이 아니면서, 닫힌리스트에 없다면
                     if (!NodeArray[checkX - bottomLeft.x, checkZ - bottomLeft.z].isWall && !ClosedList.Contains(NodeArray[checkX - bottomLeft.x, checkZ - bottomLeft.z]))
@@ -181,17 +200,17 @@ public class PlayerMovement : AStar
         for (int i = 0; i < sizeX * sizeZ; i++)
         {
             int map2dObject = 0;
-            int map2dX = (int)transform.position.x + ((i / (radiusMove * 2 + 1)) - radiusMove);
-            int map2dZ = (int)transform.position.z + ((i % (radiusMove * 2 + 1)) - radiusMove);
+            int map2dX = (int)transform.position.x + ((i / (MovingDistance * 2 + 1)) - MovingDistance);
+            int map2dZ = (int)transform.position.z + ((i % (MovingDistance * 2 + 1)) - MovingDistance);
 
             try
             {
-                map2dObject = GameManager.Instance.Map2D[map2dX, map2dZ];
+                map2dObject = Instance.Map2D[map2dX, map2dZ];
             }
             catch { }
 
             bool isWall = false;
-            if ((int)GameManager.map2DObject.wall == map2dObject || (int)GameManager.map2DObject.moster == map2dObject)
+            if ((int)map2DObject.wall == map2dObject || (int)map2DObject.moster == map2dObject)
             {
                 isWall = true;
             }

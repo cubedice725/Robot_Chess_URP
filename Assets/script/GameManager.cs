@@ -27,8 +27,6 @@ public class GameManager : MonoBehaviour
 
     private static GameManager _instance;
 
-    private MonsterMove monsterMove;
-    private PlayerMovement playerMovement;
     private Stage1 stage1;
     private Map map;
 
@@ -67,8 +65,6 @@ public class GameManager : MonoBehaviour
         // 아래의 함수를 사용하여 씬이 전환되더라도 선언되었던 인스턴스가 파괴되지 않는다.
         DontDestroyOnLoad(gameObject);
         
-        monsterMove = FindAnyObjectByType<MonsterMove>();
-        playerMovement = FindAnyObjectByType<PlayerMovement>();
         stage1 = GetComponent<Stage1>();
         map = FindAnyObjectByType<Map>();
     }

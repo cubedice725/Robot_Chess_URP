@@ -26,10 +26,9 @@ public class PlayerMovingState : IState
             var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             if (Physics.Raycast(ray, out hit, 1000f))
             {
-                _playerMovement.Hit = hit;
-
                 if (hit.transform.name.StartsWith("PlayerMovePlane"))
                 {
+                    _playerMovement.Hit = hit;
                     _playerMovement.RemovePlayerPlane();
                     _playerMovement.Move();
                     GameManager.Instance.playerState = GameManager.PlayerState.Idle;

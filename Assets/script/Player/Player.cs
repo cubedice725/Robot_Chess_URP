@@ -42,14 +42,9 @@ public class Player : MonoBehaviour
             var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             if (Physics.Raycast(ray, out hit, 1000f))
             {
-                playerMovement.Hit = hit;
                 if (hit.transform.name == "Player")
                 {
                     Instance.playerState = PlayerState.Move;
-                }
-                else
-                {
-                    Instance.playerState = PlayerState.Idle;
                 }
             }
         }

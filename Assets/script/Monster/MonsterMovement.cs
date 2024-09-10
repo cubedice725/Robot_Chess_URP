@@ -1,26 +1,18 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.Threading;
-using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using static GameManager;
 
-public class MonsterMove : AStar
+public class MonsterMovement : AStar
 {
-    public int AttackDistance { get; set; }
-    public int MovingDistance { get; set; }
+    public int AttackDistance { get; set; } = 1;
+    public int MovingDistance { get; set; } = 1;
 
-    protected override void Awake()
-    {
-        base.Awake();
-        AttackDistance = 1;
-        MovingDistance = 1;
-    }
-    
+
     public void Move()
     {
         Instance.Map2D[(int)transform.position.x, (int)transform.position.z] = (int)map2DObject.noting;
-        
+
         PathFinding(
             new Vector3Int((int)transform.position.x, (int)transform.position.y, (int)transform.position.z),
             new Vector3Int((int)player.transform.position.x, (int)player.transform.position.y, (int)player.transform.position.z),
@@ -49,5 +41,4 @@ public class MonsterMove : AStar
     {
         print("АјАн");
     }
-
 }
