@@ -3,13 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using static GameManager;
 
-public class MonsterMovement : AStar
+public abstract class MonsterMovement : AStar
 {
-    public int AttackDistance { get; set; } = 1;
-    public int MovingDistance { get; set; } = 1;
-
-
-    public void Move()
+    public virtual int AttackDistance { get; set; } = 1;
+    public virtual int MovingDistance { get; set; } = 1;
+    public virtual void Move()
     {
         Instance.Map2D[(int)transform.position.x, (int)transform.position.z] = (int)map2DObject.noting;
 

@@ -8,7 +8,7 @@ public class Stage1 : MonoBehaviour
 
     private void Awake()
     {
-        monster = Resources.Load("Prefab/Monster/Monster", typeof(GameObject)) as GameObject;
+        monster = Resources.Load("Prefab/Monster/MonsterBasic", typeof(GameObject)) as GameObject;
     }
     public void Opening()
     {
