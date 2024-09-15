@@ -16,9 +16,19 @@ public class Stage1 : MonoBehaviour
         GameManager.Instance.spawnMonsters.Add(Instantiate(monster, new Vector3(3, 0.9f, 13), Quaternion.Euler(Vector3.zero)));
     }
 
-    public void MonstersMove()
+    public void Update()
     {
-        GameManager.Instance.spawnMonsters[0].GetComponent<MonsterMovement>().Move();
-        GameManager.Instance.spawnMonsters[1].GetComponent<MonsterMovement>().Move();
+        for (int i = 0; i < GameManager.Instance.spawnMonsters.Count; i++) 
+        {
+            if (GameManager.Instance.spawnMonsters[i].GetComponent<Monster>().flag)
+            {
+
+            }
+            else
+            {
+                return;
+            }
+        }
+        GameManager.Instance.monsterTurn = false;
     }
 }

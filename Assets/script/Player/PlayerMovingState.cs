@@ -39,5 +39,6 @@ public class PlayerMovingState : IState
     public void Exit()
     {
         _playerMovement.RemovePlayerPlane();
+        GameManager.Instance.monsterTurn = true;
     }
 }

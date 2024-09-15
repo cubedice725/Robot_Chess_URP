@@ -30,7 +30,7 @@ public class MonsterStateMachine : MonoBehaviour
         nextState.Enter();
 
     }
-    public void PlayerStateMachineUpdate()
+    public void MonsterStateMachineUpdate()
     {
         if (CurrentState != null)
         {

@@ -33,6 +33,8 @@ public class GameManager : MonoBehaviour
     private bool MapCheck = true;
     public bool turnStart = false;
     public bool turnEnd = false;
+    public bool monsterTurn = false;
+    public bool playerTurn = true;
     public PlayerState playerState = PlayerState.Idle;
 
     public static GameManager Instance
@@ -87,7 +89,6 @@ public class GameManager : MonoBehaviour
         
         if (turnEnd && Instance.playerState == PlayerState.Idle)
         {
-            stage1.MonstersMove();
             turnEnd = false;
         }
     }
