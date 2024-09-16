@@ -1,9 +1,12 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
+
+[Serializable]
 public class Node
 {
     public Node ParentNode;
@@ -14,8 +17,10 @@ public class Node
     public Node(bool _isWall, int _x, int _z) { isWall = _isWall; x = _x; z = _z; }
     public int F { get { return G + H; } }
 }
+
 public class AStar : MonoBehaviour
 {
+    [SerializeField]
     protected List<Node> FinalNodeList;
     protected List<Node> OpenList, ClosedList;
     protected Player player;

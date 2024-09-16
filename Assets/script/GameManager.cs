@@ -86,7 +86,10 @@ public class GameManager : MonoBehaviour
             turnStart = false;
             turnEnd = true;
         }
-        
+        if(Input.GetMouseButtonDown(1))
+        {
+            monsterTurn = false;
+        }
         if (turnEnd && Instance.playerState == PlayerState.Idle)
         {
             turnEnd = false;

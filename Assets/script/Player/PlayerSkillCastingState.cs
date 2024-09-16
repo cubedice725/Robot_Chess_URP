@@ -18,5 +18,6 @@ public class PlayerSkillCastingState : IState
     public void Exit()
     {
         Instance.skillState.Exit();
+        Instance.monsterTurn = true;
     }
 }

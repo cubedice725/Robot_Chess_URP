@@ -8,60 +8,27 @@ using UnityEngine;
 [RequireComponent(typeof(MonsterBasicMovement))]
 public class MonsterBasic : Monster
 {
-    public bool start = true;
-    public int myNum;
-    
+    public bool start = true;    
     public override void UpdateMonster()
     {
         if (GameManager.Instance.monsterTurn)
         {
-            myNum = FindMyNum();
-            if (myNum == 0)
+            if (start)
             {
-                if (start)
+                if (monsterMovement.AttackNavigation())
                 {
-                    if (monsterMovement.AttackNavigation())
-                    {
-                        monsterState = MonsterState.Skill;
-                    }
-                    else
-                    {
-                        monsterState = MonsterState.Move;
-                    }
-                    start = false;
+                    monsterState = MonsterState.Skill;
                 }
-            }
-            else if (GameManager.Instance.spawnMonsters[myNum - 1].GetComponent<Monster>().flag == true)
-            {
-                if (start)
+                else
                 {
-                    if (monsterMovement.AttackNavigation())
-                    {
-                        monsterState = MonsterState.Skill;
-                    }
-                    else
-                    {
-                        monsterState = MonsterState.Move;
-                    }
-                    start = false;
+                    monsterState = MonsterState.Move;
                 }
+                start = false;
             }
         }
         else
         {
             start = true;
         }
-    }
-    public int FindMyNum()
-    {
-        int num;
-        for (int i = 0; i < GameManager.Instance.spawnMonsters.Count; i++)
-        {
-            if (GameManager.Instance.spawnMonsters[i].GetComponent<Monster>() == this)
-            {
-                return num = i;
-            }
-        }
-        return 0;
     }
 }

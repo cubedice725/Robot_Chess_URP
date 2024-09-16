@@ -6,15 +6,17 @@ public class MonsterBasicMovingState : MonsterMovingState
 {
     public override void Enter()
     {
-        monsterMovement.Move();
     }
     public override void IStateUpdate()
     {
-        monster.flag = true;
+        if (!monsterMovement.Move())
+        {
+            monster.monsterState = Monster.MonsterState.Idle;
+        }
     }
     public override void Exit()
     {
-        monster.flag = false;
+
     }
 
     

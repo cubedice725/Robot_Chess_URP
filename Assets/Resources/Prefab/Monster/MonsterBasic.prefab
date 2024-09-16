@@ -135,6 +135,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b7428677e8370fa4db8b3fd5295aefe9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  monster: {fileID: 0}
+  monsterMovement: {fileID: 0}
 --- !u!114 &4063858206791992322
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -147,6 +149,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f405100632de9f44396354bf8b3c8216, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  monster: {fileID: 0}
+  monsterMovement: {fileID: 0}
 --- !u!114 &4018546343739354310
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -159,6 +163,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 72ce1d341d9a0a84e8498f4b54aa65ab, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  start: 1
 --- !u!114 &5853400154150448860
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -183,4 +188,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 53f357ff81354b94bb59bec90be9cfd7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  flag: 0
   monsterState: 0
+  monsterStateMachine: {fileID: 0}
+  monsterMovement: {fileID: 0}
+  start: 1
