@@ -1,39 +1,49 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using static GameManager;
 
 public abstract class MonsterMovement : AStar
 {
-    int i = 1;
-    public virtual int AttackDistance { get; set; } = 1;
-    public virtual int MovingDistance { get; set; } = 1;
+    int count = 1;
+    protected Monster monster;
     public bool start = true;
-    public virtual bool Move()
+    protected override void Awake()
     {
+        base.Awake(); 
+        monster = GetComponent<Monster>();
+    }
+    // 실제 몬스터가 움직임
+    public virtual bool UpdateMove()
+    {
+        // 몬스터 부터 플레이어 까지의 거리 확인
         if (FinalNodeList.Count != 0)
         {
-            if (i <= MovingDistance)
+            // MovingDistance을 통해 행동을 제약
+            if (count <= monster.MovingDistance)
             {
                 Instance.Map2D[(int)Mathf.Round(transform.position.x), (int)Mathf.Round(transform.position.z)] = (int)map2DObject.noting;
-                if (!UpdateLooking(new Vector3(FinalNodeList[i].x, transform.position.y, FinalNodeList[i].z)))
+                // 다음 위치를 바라보는게 끝나면
+                if (!UpdateLooking(new Vector3(FinalNodeList[count].x, transform.position.y, FinalNodeList[count].z)))
                 {
+                    // 다음 위치까지 움직임
                     transform.Translate(Vector3.forward * 7f * Time.deltaTime);
-                    if (Vector3.Distance(transform.position, new Vector3(FinalNodeList[i].x, transform.position.y, FinalNodeList[i].z)) <= 0.1)
+                    // 다음 위치까지 몬스터의 움직임이 거리가 0.1 아래이면 도착이라 판단
+                    if (Vector3.Distance(transform.position, new Vector3(FinalNodeList[count].x, transform.position.y, FinalNodeList[count].z)) <= 0.1)
                     {
                         Instance.Map2D[(int)Mathf.Round(transform.position.x), (int)Mathf.Round(transform.position.z)] = (int)map2DObject.moster;
-                        if (0 == FinalNodeList.Count - (AttackDistance + 2 + i))
+
+                        //만약 현 위치가 공격 사거리에 도달하면 움직임을 멈춤
+                        if (0 == FinalNodeList.Count - (monster.AttackDistance + 2 + count))
                         {
-                            i = 1;
+                            count = 1;
                             return false;
                         }
-                        i++;
+                        count++;
                     }
                 }
             }
             else
             {
-                i = 1;
+                count = 1;
                 return false;
             }
         }
@@ -43,10 +53,13 @@ public abstract class MonsterMovement : AStar
         }
         return true;
     }
+    // 공격 사거리 확인을 위한 함수
     public bool AttackNavigation()
     {
         // 자기 위치가 비어있어야 탐색 가능
         Instance.Map2D[(int)Mathf.Round(transform.position.x), (int)Mathf.Round(transform.position.z)] = (int)map2DObject.noting;
+        
+        // 탐색
         PathFinding(
             new Vector3Int((int)Mathf.Round(transform.position.x), (int)Mathf.Round(transform.position.y), (int)Mathf.Round(transform.position.z)),
             new Vector3Int((int)Mathf.Round(player.transform.position.x), (int)Mathf.Round(player.transform.position.y), (int)Mathf.Round(player.transform.position.z)),
@@ -55,12 +68,14 @@ public abstract class MonsterMovement : AStar
             );
         Instance.Map2D[(int)Mathf.Round(transform.position.x), (int)Mathf.Round(transform.position.z)] = (int)map2DObject.moster;
 
-        if (FinalNodeList.Count < AttackDistance + 3 && FinalNodeList.Count != 0)
+        // 사거리 안에 있는지 확인
+        if (FinalNodeList.Count < monster.AttackDistance + 3 && FinalNodeList.Count != 0)
         {
             return true;
         }
         return false;
     }
+    // 실제로 몬스터가 회전을 함
     public bool UpdateLooking(Vector3 target)
     {
         float stopAngle = 1.0f;

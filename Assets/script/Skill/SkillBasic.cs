@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class SkillBasic : Skill
@@ -45,6 +43,7 @@ public class SkillBasic : Skill
             skillObject.Direction = transform.TransformDirection(Vector3.forward);
             skillObject.gameObject.SetActive(true);
             GameManager.Instance.playerState = GameManager.PlayerState.Idle;
+            GameManager.Instance.FromPlayerToMonster();
         }
     }
     public override void Exit()

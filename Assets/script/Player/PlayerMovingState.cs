@@ -1,8 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
-using Unity.Burst.CompilerServices;
-using Unity.VisualScripting;
-using Unity.VisualScripting.FullSerializer;
 using UnityEngine;
 
 public class PlayerMovingState : IState
@@ -32,6 +27,7 @@ public class PlayerMovingState : IState
                     _playerMovement.RemovePlayerPlane();
                     _playerMovement.Move();
                     GameManager.Instance.playerState = GameManager.PlayerState.Idle;
+                    GameManager.Instance.FromPlayerToMonster();
                 }
             }
         }
@@ -39,6 +35,5 @@ public class PlayerMovingState : IState
     public void Exit()
     {
         _playerMovement.RemovePlayerPlane();
-        GameManager.Instance.monsterTurn = true;
     }
 }

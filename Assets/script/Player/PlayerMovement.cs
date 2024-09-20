@@ -1,6 +1,4 @@
-using System.Collections;
 using System.Collections.Generic;
-using UnityEditor.VisionOS;
 using UnityEngine;
 using UnityEngine.Pool;
 using static GameManager;
@@ -49,8 +47,11 @@ public class PlayerMovement : AStar
     }
     public void OnClickSkillTest()
     {
-        Instance.playerState = PlayerState.Skill;
-        Instance.skillState = skillBasic;
+        if (Instance.skillState == null)
+        {
+            Instance.playerState = PlayerState.Skill;
+            Instance.skillState = skillBasic;
+        }
     }
 
     // 플레이어 움직임 관련 함수
@@ -264,5 +265,4 @@ public class PlayerMovement : AStar
     {
         Destroy(plane.gameObject);
     }
-
 }

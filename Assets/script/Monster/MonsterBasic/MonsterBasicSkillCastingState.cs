@@ -1,6 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Pool;
 
@@ -34,6 +31,7 @@ public class MonsterBasicSkillCastingState : MonsterSkillCastingState
             skillObject.Direction = transform.TransformDirection(Vector3.forward);
             skillObject.gameObject.SetActive(true);
             monster.monsterState = Monster.MonsterState.Idle;
+            monster.flag = true;
         }
     }
     public override void Exit()

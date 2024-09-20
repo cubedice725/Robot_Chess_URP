@@ -1,7 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
 public class MonsterBasicMovingState : MonsterMovingState
 {
     public override void Enter()
@@ -9,9 +5,10 @@ public class MonsterBasicMovingState : MonsterMovingState
     }
     public override void IStateUpdate()
     {
-        if (!monsterMovement.Move())
+        if (!monsterMovement.UpdateMove())
         {
             monster.monsterState = Monster.MonsterState.Idle;
+            monster.flag = true;
         }
     }
     public override void Exit()

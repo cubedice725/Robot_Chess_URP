@@ -1,6 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
-using Unity.Burst.CompilerServices;
 using UnityEngine;
 using static GameManager;
 public class PlayerSkillCastingState : IState
@@ -18,6 +15,6 @@ public class PlayerSkillCastingState : IState
     public void Exit()
     {
         Instance.skillState.Exit();
-        Instance.monsterTurn = true;
+        Instance.skillState = null;
     }
 }

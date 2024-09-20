@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour
@@ -29,10 +28,12 @@ public class GameManager : MonoBehaviour
 
     private Stage1 stage1;
     private Map map;
+    private int count = 0;
 
     private bool MapCheck = true;
     public bool turnStart = false;
     public bool turnEnd = false;
+
     public bool monsterTurn = false;
     public bool playerTurn = true;
     public PlayerState playerState = PlayerState.Idle;
@@ -71,8 +72,35 @@ public class GameManager : MonoBehaviour
         map = FindAnyObjectByType<Map>();
     }
 
+    public void FromPlayerToMonster()
+    {
+        Instance.monsterTurn = true;
+        Instance.playerTurn = false;
+    }
+
     private void Update()
     {
+        if (spawnMonsters.Count > 0)
+        {
+            
+            if (spawnMonsters[count].GetComponent<Monster>().flag)
+            {
+                if (count < spawnMonsters.Count - 1)
+                {
+                    count++;
+                }
+                else
+                {
+                    for (count = 0; count < spawnMonsters.Count; count++)
+                    {
+                        spawnMonsters[count].GetComponent<Monster>().flag = false;
+                    }
+                    count = 0;
+                    monsterTurn = false;
+                    playerTurn = true;
+                }
+            }
+        }
         //¸ÊÀ» Å½»ö ÇÑ¹ø¸¸ ÀÛµ¿
         if (MapCheck)
         {

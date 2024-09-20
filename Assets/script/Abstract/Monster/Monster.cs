@@ -1,14 +1,11 @@
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using Unity.VisualScripting;
-using UnityEditor.Profiling.Memory.Experimental;
 using UnityEngine;
 
 public abstract class Monster : MonoBehaviour
 {
-    // 몬스터의 
+    // 몬스터의 행동이 끝날 경우 True로 바꿔야함
     public bool flag = false;
+    public virtual int AttackDistance { get; set; } = 1;
+    public virtual int MovingDistance { get; set; } = 1;
     public enum MonsterState
     {
         Idle,
@@ -45,7 +42,7 @@ public abstract class Monster : MonoBehaviour
         // 몬스터 턴인 경우 개발자가 작성하여 몬스터 움직임을 설정
         UpdateMonster();
 
-        ////몬스터 턴이 아닌경우 움직임
+        //몬스터 턴이 아닌경우 움직임
         if (!GameManager.Instance.monsterTurn)
         {
             monsterState = MonsterState.Idle;

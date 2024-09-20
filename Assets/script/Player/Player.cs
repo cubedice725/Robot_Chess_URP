@@ -1,7 +1,3 @@
-using Cinemachine;
-using System.Collections;
-using System.Collections.Generic;
-using Unity.Burst.CompilerServices;
 using UnityEngine;
 using static GameManager;
 
@@ -10,7 +6,6 @@ public class Player : MonoBehaviour
 {
     private PlayerStateMachine playerStateMachine;
     private PlayerMovement playerMovement;
-    private RaycastHit hit;
     public PlayerState playerState = PlayerState.Idle;
 
     private void Awake()
@@ -22,6 +17,11 @@ public class Player : MonoBehaviour
     }
     private void Update()
     {
+        // 플레이어 턴이 아니면 작동안함
+        if (!Instance.playerTurn)
+            return;
+
+        //현재 상태를 통해 동작을 바꿔줌
         if (Instance.playerState == PlayerState.Idle) 
         {
             playerStateMachine.TransitionTo(playerStateMachine.playerIdleState);
@@ -35,18 +35,5 @@ public class Player : MonoBehaviour
             playerStateMachine.TransitionTo(playerStateMachine.playerSkillCastingState);
         }
         playerStateMachine.PlayerStateMachineUpdate();
-
-        if (Input.GetMouseButtonDown(0))
-        {
-            // 메인 카메라를 통해 마우스 클릭한 곳의 ray 정보를 가져옴
-            var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            if (Physics.Raycast(ray, out hit, 1000f))
-            {
-                if (hit.transform.name == "Player")
-                {
-                    Instance.playerState = PlayerState.Move;
-                }
-            }
-        }
     }
 }
